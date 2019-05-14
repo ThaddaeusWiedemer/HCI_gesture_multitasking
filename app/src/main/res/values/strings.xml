@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Gesture Multi Tasking</string>
+    <string name="title_activity_color_blocks">ColorBlocksActivity</string>
 </resources>
