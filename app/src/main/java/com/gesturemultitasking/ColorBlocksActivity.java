@@ -2,6 +2,8 @@ package com.gesturemultitasking;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
+import android.support.constraint.ConstraintSet;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.MotionEvent;
@@ -11,6 +13,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.GridLayout;
 import android.widget.GridLayout.LayoutParams;
+import android.widget.GridLayout.Spec;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -40,22 +43,120 @@ public class ColorBlocksActivity extends AppCompatActivity {
         //        WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         setContentView(R.layout.activity_color_blocks);
-         GridLayout root = (GridLayout) findViewById(R.id.root);
-        //DemoWindow first = new DemoWindow(this);
-        LayoutParams p = new LayoutParams(LayoutParams.)
+        ConstraintLayout root = (ConstraintLayout) findViewById(R.id.root);
+        DemoWindow first = new DemoWindow(this, "first");
+        first.setId(View.generateViewId());
+
+        ConstraintLayout.LayoutParams firstp = new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.MATCH_CONSTRAINT, ConstraintLayout.LayoutParams.MATCH_CONSTRAINT);
+        first.setLayoutParams(firstp);
+
+        root.addView(first);
+
+        ConstraintSet constraintSet = new ConstraintSet();
+        constraintSet.clone(root);
+        constraintSet.connect(first.getId(), ConstraintSet.TOP, root.getId(), ConstraintSet.TOP);
+        constraintSet.connect(first.getId(), ConstraintSet.BOTTOM, root.getId(), ConstraintSet.BOTTOM);
+        constraintSet.connect(first.getId(), ConstraintSet.START, root.getId(), ConstraintSet.START);
+        constraintSet.connect(first.getId(), ConstraintSet.END, root.getId(), ConstraintSet.END);
+
+        constraintSet.applyTo(root);
+        ColorBlocksActivity.addWindow(first, "top");
 
 
 
-        //root.addView(first);
-        //add_view(first, "bottom");
-        // setup gesture detectors
-        
+
+
+
         mScaleGestureDetector = new ScaleGestureDetector(this, new PinchListener());
         mMoveGestureDetector = new SwipeGestureDetector(this, new SwipeListener());
 
         // debug toasts
         Context context = getApplicationContext();
         toast = new Toast(context);
+    }
+
+    public static void addWindow(View from, String dir){
+        ConstraintLayout parent = (ConstraintLayout) from.getParent();
+        int n_els = parent.getChildCount();
+        View divider = new View(parent.getContext());
+        divider.setId(View.generateViewId());
+        int new_id = View.generateViewId();
+        DemoWindow new_window = new DemoWindow(parent.getContext(), Integer.toString(new_id));
+        new_window.setId(new_id);
+        ConstraintLayout.LayoutParams new_params = new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.MATCH_CONSTRAINT, ConstraintLayout.LayoutParams.MATCH_CONSTRAINT);
+        new_window.setLayoutParams(new_params);
+        ConstraintSet c = new ConstraintSet();
+        // Decide what new layout is going to be:
+        if (n_els == 1) {
+            switch (dir) {
+                case "top":
+                    c = getHorizontalSplitLayout(parent.getId(), new_window.getId(), divider.getId(), from.getId());
+                    parent.addView(divider, 0);
+                    parent.addView(new_window, 0);
+                    divider.getLayoutParams().height=20;
+                    break;
+
+                case "bottom":
+                    c = getHorizontalSplitLayout(parent.getId(), from.getId(), divider.getId(), new_window.getId());
+                    parent.addView(divider, 1);
+                    parent.addView(new_window, 2);
+                    divider.getLayoutParams().height=20;
+                    break;
+
+                case "left":
+                    c = getVerticalSplitLayout(parent.getId(), new_window.getId(), divider.getId(), from.getId());
+                    parent.addView(divider, 0);
+                    parent.addView(new_window, 0);
+                    divider.getLayoutParams().width=20;
+                    break;
+
+                case "right":
+                    c = getVerticalSplitLayout(parent.getId(), from.getId(), divider.getId(), new_window.getId());
+                    parent.addView(divider, 1);
+                    parent.addView(new_window, 2);
+                    divider.getLayoutParams().width=20;
+                    break;
+            }
+        }
+        c.applyTo(parent);
+
+    }
+    public static ConstraintSet getVerticalSplitLayout(int root, int left, int div, int right){
+        ConstraintSet ret = new ConstraintSet();
+        ret.connect(left, ConstraintSet.TOP, root, ConstraintSet.TOP);
+        ret.connect(left, ConstraintSet.BOTTOM, root, ConstraintSet.BOTTOM);
+        ret.connect(left, ConstraintSet.START, root, ConstraintSet.START);
+        ret.connect(left, ConstraintSet.END, div, ConstraintSet.START);
+
+        ret.connect(div, ConstraintSet.TOP, root, ConstraintSet.TOP);
+        ret.connect(div, ConstraintSet.BOTTOM, root, ConstraintSet.BOTTOM);
+        ret.connect(div, ConstraintSet.START, root, ConstraintSet.START, 150);
+
+        ret.connect(right, ConstraintSet.TOP, root, ConstraintSet.TOP);
+        ret.connect(right, ConstraintSet.BOTTOM, root, ConstraintSet.BOTTOM);
+        ret.connect(right, ConstraintSet.START, div, ConstraintSet.END);
+        ret.connect(right, ConstraintSet.END, root, ConstraintSet.END);
+
+        return ret;
+    }
+
+    public static ConstraintSet getHorizontalSplitLayout(int root, int fst, int div, int snd){
+        ConstraintSet ret = new ConstraintSet();
+        ret.connect(fst, ConstraintSet.START, root, ConstraintSet.START);
+        ret.connect(fst, ConstraintSet.END, root, ConstraintSet.END);
+        ret.connect(fst, ConstraintSet.TOP, root, ConstraintSet.TOP);
+        ret.connect(fst, ConstraintSet.BOTTOM, div, ConstraintSet.TOP);
+
+        ret.connect(div, ConstraintSet.START, root, ConstraintSet.START);
+        ret.connect(div, ConstraintSet.END, root, ConstraintSet.END);
+        ret.connect(div, ConstraintSet.TOP, root, ConstraintSet.TOP, 150);
+
+        ret.connect(snd, ConstraintSet.START, root, ConstraintSet.START);
+        ret.connect(snd, ConstraintSet.END, root, ConstraintSet.END);
+        ret.connect(snd, ConstraintSet.TOP, div, ConstraintSet.BOTTOM);
+        ret.connect(snd, ConstraintSet.BOTTOM, root, ConstraintSet.BOTTOM);
+
+        return ret;
     }
 
     // handels all touch events and calls the gesture listeners
@@ -108,53 +209,5 @@ public class ColorBlocksActivity extends AppCompatActivity {
         }
     }
 
-       public void add_view(View relative_to, String direction){
-        LinearLayout parent = (LinearLayout) relative_to.getParent();
-        LinearLayout new_parent = parent;
-        DemoWindow new_window = new DemoWindow(this);
-
-        switch (direction){
-            case "top":
-                if(parent.getChildCount() ==2 ){
-                    new_parent = new LinearLayout(this);
-                    parent.addView(new_parent);
-                    new_parent.addView(relative_to);
-                }
-                new_parent.setOrientation(LinearLayout.VERTICAL);
-                new_parent.addView(new_window, 0);
-                break;
-            case "bottom":
-                if(parent.getChildCount() ==2 ){
-                    new_parent = new LinearLayout(this);
-                    parent.addView(new_parent);
-                    new_parent.addView(relative_to);
-                }
-                new_parent.setOrientation(LinearLayout.VERTICAL);
-                new_parent.addView(new_window, 1);
-                break;
-            case "left":
-                if(parent.getChildCount()==2) {
-                    new_parent = new LinearLayout(this);
-                    parent.addView(new_parent);
-                    new_parent.addView(relative_to);
-                }
-                new_parent.setOrientation(LinearLayout.HORIZONTAL);
-                new_parent.addView(new_window, 0);
-                break;
-            case "right":
-                if(parent.getChildCount()==2) {
-                    new_parent = new LinearLayout(this);
-                    parent.addView(new_parent);
-                    new_parent.addView(relative_to);
-                }
-                new_parent.setOrientation(LinearLayout.HORIZONTAL);
-                new_parent.addView(new_window, 1);
-                break;
-
-        }
-
-
-
-   }
-
 }
+
