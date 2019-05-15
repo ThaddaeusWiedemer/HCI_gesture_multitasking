@@ -9,22 +9,4 @@
     android:rowCount="2"
     >
 
-    <com.gesturemultitasking.DemoWindow
-        android:id="@+id/snd"
-        android:layout_rowWeight="1"
-        android:layout_columnWeight="1"
-        android:background="#FF0000"/>
-    <com.gesturemultitasking.DemoWindow
-        android:id="@+id/fst"
-        android:layout_rowWeight="1"
-        android:layout_columnWeight="1"
-        android:background="#FF00FF"
-        android:layout_rowSpan="2"/>
-    <com.gesturemultitasking.DemoWindow
-        android:id="@+id/snd"
-        android:layout_rowWeight="1"
-        android:layout_columnWeight="1"
-        android:background="#00FF00"/>
-
-</GridLayout>
 

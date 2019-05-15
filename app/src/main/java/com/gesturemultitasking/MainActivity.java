@@ -1,6 +1,5 @@
 package com.gesturemultitasking;
 
-import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.GestureDetector;
@@ -82,7 +81,7 @@ public class MainActivity extends AppCompatActivity{
         }
     }
 
-    private class MySwipeListener extends SwipeGestureDetector.SimpleOnMoveGestureListener {
+    private class MySwipeListener extends SwipeGestureDetector.SimpleOnSwipeGestureListener {
         @Override
         public boolean onSwipe(SwipeGestureDetector detector) {
             name = "Swipe";
