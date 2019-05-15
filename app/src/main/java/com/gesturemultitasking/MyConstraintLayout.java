@@ -125,9 +125,15 @@ public class MyConstraintLayout extends ConstraintLayout {
         // apply constraintSet
         constraintSet.applyTo(this);
 
-        // handle content
+        // draw divider correctly
+        if(mOrientation){
+            mDivider.getLayoutParams().height = DIVIDER_SIZE;
+        }else{
+            mDivider.getLayoutParams().width = DIVIDER_SIZE;
+        }
         mDivider.setBackgroundColor(android.R.color.black);
 
+        // handle content
         Random rnd = new Random();
         int color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
         if(side){
