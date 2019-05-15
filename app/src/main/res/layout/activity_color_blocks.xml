@@ -24,5 +24,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/left"
         app:layout_constraintTop_toTopOf="parent"
-        android:background="#0000FF"
+        android:background="#0000FF">
+    </View>
 </android.support.constraint.ConstraintLayout>
