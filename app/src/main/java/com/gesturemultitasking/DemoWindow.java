@@ -23,31 +23,31 @@ public class DemoWindow extends android.support.constraint.ConstraintLayout {
 
     private void init(String s) {
        inflate(getContext(), R.layout.demo_window, this);
-        ((TextView)this.findViewById(R.id.number)).setText(s);
-        ((Button)this.findViewById(R.id.top_but)).setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ColorBlocksActivity.addWindow(v, "top");
-            }
-        });
-        ((Button)this.findViewById(R.id.bottom_but)).setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ColorBlocksActivity.addWindow(v, "bottom");
-            }
-        });
-        ((Button)this.findViewById(R.id.left_but)).setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ColorBlocksActivity.addWindow(v, "left");
-            }
-        });
-         ((Button)this.findViewById(R.id.right_but)).setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ColorBlocksActivity.addWindow(v, "right");
-            }
-        });
+//        ((TextView)this.findViewById(R.id.number)).setText(s);
+//        ((Button)this.findViewById(R.id.top_but)).setOnClickListener(new OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                ColorBlocksActivity.addWindow(v, "top");
+//            }
+//        });
+//        ((Button)this.findViewById(R.id.bottom_but)).setOnClickListener(new OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                ColorBlocksActivity.addWindow(v, "bottom");
+//            }
+//        });
+//        ((Button)this.findViewById(R.id.left_but)).setOnClickListener(new OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                ColorBlocksActivity.addWindow(v, "left");
+//            }
+//        });
+//         ((Button)this.findViewById(R.id.right_but)).setOnClickListener(new OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                ColorBlocksActivity.addWindow(v, "right");
+//            }
+//        });
 
 
     }

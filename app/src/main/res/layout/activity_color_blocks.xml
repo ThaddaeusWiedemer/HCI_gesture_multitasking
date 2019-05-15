@@ -6,6 +6,20 @@
     android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    />
+    >
+    <com.gesturemultitasking.MyConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/first">
 
+        <View
+            android:id="@+id/divider6"
+            android:layout_width="395dp"
+            android:layout_height="20dp"
+            android:background="#00D61414"
+            tools:layout_editor_absoluteX="8dp"
+            tools:layout_editor_absoluteY="260dp" />
+    </com.gesturemultitasking.MyConstraintLayout>
+
+</android.support.constraint.ConstraintLayout>
 
