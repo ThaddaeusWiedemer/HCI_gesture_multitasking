@@ -9,11 +9,13 @@
         android:id="@+id/left"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:background="#FF0000"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/imageView3"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:background="#FF0000">
+        app:layout_constraintVertical_bias="1.0">
+
     </FrameLayout>
 
     <View
@@ -26,4 +28,32 @@
         app:layout_constraintTop_toTopOf="parent"
         android:background="#0000FF">
     </View>
+
+    <TextView
+        android:id="@+id/g_n"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toStartOf="@+id/left"
+        app:layout_constraintTop_toTopOf="@+id/left" />
+
+    <TextView
+        android:id="@+id/g_o"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="12dp"
+        app:layout_constraintStart_toStartOf="@+id/left"
+        app:layout_constraintTop_toBottomOf="@+id/g_p" />
+
+    <TextView
+        android:id="@+id/g_p"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="12dp"
+        app:layout_constraintStart_toStartOf="@+id/left"
+        app:layout_constraintTop_toBottomOf="@+id/g_n" />
+
 </android.support.constraint.ConstraintLayout>
