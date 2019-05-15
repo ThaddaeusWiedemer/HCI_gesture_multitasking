@@ -106,7 +106,7 @@ public class SwipeGestureDetector extends BaseGestureDetector {
                     // finger is lifted.
                     if (mCurrPressure / mPrevPressure > PRESSURE_THRESHOLD) {
                         // determine if it's an in or out swipe
-                        int x_lower = 150, y_lower = 150;
+                        int x_lower = 300, y_lower = 300;
                         int x_upper = 2160 - x_lower;
                         int y_upper = 1920 - y_lower;
                         final boolean updatePrevious;

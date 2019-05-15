@@ -44,7 +44,6 @@ public class ColorBlocksActivity extends AppCompatActivity {
         // debug toasts
         Context context = getApplicationContext();
         toast = new Toast(context);
-        toast.setDuration(Toast.LENGTH_SHORT);
     }
 
     // handels all touch events and calls the gesture listeners
