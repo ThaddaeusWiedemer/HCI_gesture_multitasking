@@ -8,8 +8,10 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.LinearLayout;
 
 public class ColorBlocksActivity extends AppCompatActivity {
+    int n_demo_windows = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,8 +22,14 @@ public class ColorBlocksActivity extends AppCompatActivity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         setContentView(R.layout.activity_color_blocks);
+        LinearLayout root = (LinearLayout) findViewById(R.id.root);
+        DemoWindow first = new DemoWindow(this);
+        root.addView(first);
 
 
     }
+   public void add_view()
+
+
 
 }
