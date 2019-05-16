@@ -315,8 +315,15 @@ public class SwipeGestureDetector extends BaseGestureDetector {
             x += e.getX(i);
             y += e.getY(i);
         }
+        x /= pCount;
+        y /= pCount;
 
-        return new PointF(x/pCount, y/pCount);
+        float rawViewX = e.getRawX()-e.getX();
+        float rawViewY = e.getRawY()-e.getY();
+        x += rawViewX;
+        y += rawViewY;
+
+        return new PointF(x, y);
     }
 
     public int getmType() {
