@@ -16,16 +16,16 @@ public class SwipeGestureDetector extends BaseGestureDetector {
      * @see SimpleOnSwipeGestureListener
      */
     public interface OnSwipeGestureListener {
-        public boolean onSwipe(SwipeGestureDetector detector);
-        public boolean onOutSwipe(SwipeGestureDetector detector);
-        public boolean onInSwipe(SwipeGestureDetector detector);
-        public boolean isMySwipe(SwipeGestureDetector detector);
-        public boolean isMyOutSwipe(SwipeGestureDetector detector);
-        public boolean isMyInSwipe(SwipeGestureDetector detector);
-        public boolean onSwipeBegin(SwipeGestureDetector detector);
-        public boolean onOutSwipeBegin(SwipeGestureDetector detector);
-        public boolean onInSwipeBegin(SwipeGestureDetector detector);
-        public void onSwipeEnd(SwipeGestureDetector detector);
+        boolean onSwipe(SwipeGestureDetector detector);
+        boolean onOutSwipe(SwipeGestureDetector detector);
+        boolean onInSwipe(SwipeGestureDetector detector);
+        boolean isMySwipe(SwipeGestureDetector detector);
+        boolean isMyOutSwipe(SwipeGestureDetector detector);
+        boolean isMyInSwipe(SwipeGestureDetector detector);
+        boolean onSwipeBegin(SwipeGestureDetector detector);
+        boolean onOutSwipeBegin(SwipeGestureDetector detector);
+        boolean onInSwipeBegin(SwipeGestureDetector detector);
+        void onSwipeEnd(SwipeGestureDetector detector);
     }
 
     /**
@@ -79,25 +79,23 @@ public class SwipeGestureDetector extends BaseGestureDetector {
 
     private final OnSwipeGestureListener mListener;
 
-    private PointF mCurrFocusInternal;
-    private PointF mPrevFocusInternal;
     private PointF mInitFocus = new PointF();
     private PointF mFocusExternal = new PointF();
     private PointF mFocusDeltaExternal = new PointF();
 
     // type of gesture
     private int mType;
-    public static final int TYPE_SWIPE = 0;
-    public static final int TYPE_IN_SWIPE = 1;
-    public static final int TYPE_OUT_SWIPE = 2;
+    private static final int TYPE_SWIPE = 0;
+    private static final int TYPE_IN_SWIPE = 1;
+    private static final int TYPE_OUT_SWIPE = 2;
 
     // type for in- and out-swipes
     private int mEdge;
-    public static final int EDGE_LEFT = 1;
-    public static final int EDGE_RIGHT = 2;
-    public static final int EDGE_NONE = 0;
-    public static final int EDGE_TOP = -1;
-    public static final int EDGE_BOTTOM = -2;
+    static final int EDGE_LEFT = 1;
+    static final int EDGE_RIGHT = 2;
+    private static final int EDGE_NONE = 0;
+    static final int EDGE_TOP = -1;
+    static final int EDGE_BOTTOM = -2;
 
     // edge-swipe thresholds
     private int thresh_in;
@@ -105,11 +103,11 @@ public class SwipeGestureDetector extends BaseGestureDetector {
     private int res_x;
     private int res_y;
 
-    public SwipeGestureDetector(Context context, OnSwipeGestureListener listener) {
+    SwipeGestureDetector(Context context, OnSwipeGestureListener listener) {
         this(context, listener, 50, 400, 2160, 1920);
     }
 
-    public SwipeGestureDetector(Context context, OnSwipeGestureListener listener, int in, int out, int x, int y) {
+    SwipeGestureDetector(Context context, OnSwipeGestureListener listener, int in, int out, int x, int y) {
         super(context);
         mListener = listener;
 
@@ -120,7 +118,7 @@ public class SwipeGestureDetector extends BaseGestureDetector {
         res_y = y;
     }
 
-    public boolean isMyEvent(MotionEvent event){
+    boolean isMyEvent(MotionEvent event){
         final int actionCode = event.getAction() & MotionEvent.ACTION_MASK;
         if (!mGestureInProgress) {
             return isMyStartProgressEvent(actionCode, event);
@@ -140,7 +138,7 @@ public class SwipeGestureDetector extends BaseGestureDetector {
         return true;
     }
 
-    protected boolean isMyStartProgressEvent(int actionCode, MotionEvent event){
+    private boolean isMyStartProgressEvent(int actionCode, MotionEvent event){
         boolean isMine = false;
         switch (actionCode) {
             case MotionEvent.ACTION_DOWN:
@@ -227,7 +225,7 @@ public class SwipeGestureDetector extends BaseGestureDetector {
         }
     }
 
-    protected boolean isMyInProgressEvent(int actionCode, MotionEvent event){
+    private boolean isMyInProgressEvent(int actionCode, MotionEvent event){
         boolean isMine = false;
         switch (actionCode) {
             case MotionEvent.ACTION_UP:
@@ -348,8 +346,8 @@ public class SwipeGestureDetector extends BaseGestureDetector {
         final MotionEvent prev = mPrevEvent;
 
         // Focus internal
-        mCurrFocusInternal = determineFocalPoint(curr);
-        mPrevFocusInternal = determineFocalPoint(prev);
+        PointF mCurrFocusInternal = determineFocalPoint(curr);
+        PointF mPrevFocusInternal = determineFocalPoint(prev);
 
         // Focus external
         // - Prevent skipping of focus delta when a finger is added or removed
@@ -383,19 +381,15 @@ public class SwipeGestureDetector extends BaseGestureDetector {
         return new PointF(x, y);
     }
 
-    public int getmType() {
-        return mType;
-    }
-
-    public int getEdge() {
+    int getEdge() {
         return mEdge;
     }
 
-    public float getFocusX() {
+    float getFocusX() {
         return mFocusExternal.x;
     }
 
-    public float getFocusY() {
+    float getFocusY() {
         return mFocusExternal.y;
     }
 
@@ -403,7 +397,7 @@ public class SwipeGestureDetector extends BaseGestureDetector {
         return mFocusDeltaExternal;
     }
 
-    public PointF getInitialFocus() {
+    PointF getInitialFocus() {
         return mInitFocus;
     }
 }

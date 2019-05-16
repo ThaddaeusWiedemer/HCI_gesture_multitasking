@@ -13,13 +13,13 @@ import android.widget.Toast;
 
 import java.util.Random;
 
-public class MyConstraintLayout extends ConstraintLayout {
+public class AppContainer extends ConstraintLayout {
     private boolean divided;
     public int mDepth;
     public boolean mOrientation;
     public View mDivider;
-    public MyConstraintLayout mStart;
-    public MyConstraintLayout mEnd;
+    public AppContainer mStart;
+    public AppContainer mEnd;
     /**          _____              ____
      * vertical |  |  | horizontal |____| start
      *          |__|__|            |____| end
@@ -40,24 +40,24 @@ public class MyConstraintLayout extends ConstraintLayout {
     private Context mContext;
     public int mColor = android.R.color.white;
 
-    public MyConstraintLayout(Context context){
+    public AppContainer(Context context){
         this(context, null, 0, 0, ORIENT_V);
     }
 
-    public MyConstraintLayout(Context context, AttributeSet attrs){
+    public AppContainer(Context context, AttributeSet attrs){
         this(context, attrs, 0, 0, ORIENT_V);
     }
 
-    public MyConstraintLayout(Context context, AttributeSet attrs, int defStyleAttr){
+    public AppContainer(Context context, AttributeSet attrs, int defStyleAttr){
         this(context, attrs, defStyleAttr, 0, ORIENT_V);
     }
 
-    public MyConstraintLayout(Context context, int depth, boolean orientation){
+    public AppContainer(Context context, int depth, boolean orientation){
         this(context, null, 0, depth, orientation);
     }
 
     @SuppressLint("ResourceAsColor")
-    public MyConstraintLayout(Context context, AttributeSet attrs, int defStyleAttr, int depth, boolean orientation){
+    public AppContainer(Context context, AttributeSet attrs, int defStyleAttr, int depth, boolean orientation){
         super(context, attrs, defStyleAttr);
 
         //divided = false;
@@ -91,20 +91,20 @@ public class MyConstraintLayout extends ConstraintLayout {
             // horizontal
             constraintSet.connect(mDivider.getId(), ConstraintSet.START, getId(), ConstraintSet.START);
             constraintSet.connect(mDivider.getId(), ConstraintSet.END, getId(), ConstraintSet.END);
-            constraintSet.connect(mDivider.getId(), ConstraintSet.TOP, getId(), ConstraintSet.TOP,(getMeasuredHeight() - MyConstraintLayout.DIVIDER_SIZE)/2);
+            constraintSet.connect(mDivider.getId(), ConstraintSet.TOP, getId(), ConstraintSet.TOP,(getMeasuredHeight() - AppContainer.DIVIDER_SIZE)/2);
         }else{
             // vertical
             constraintSet.connect(mDivider.getId(), ConstraintSet.TOP, getId(), ConstraintSet.TOP);
             constraintSet.connect(mDivider.getId(), ConstraintSet.BOTTOM, getId(), ConstraintSet.BOTTOM);
-            constraintSet.connect(mDivider.getId(), ConstraintSet.START, getId(), ConstraintSet.START,(getMeasuredWidth() - MyConstraintLayout.DIVIDER_SIZE)/2);
+            constraintSet.connect(mDivider.getId(), ConstraintSet.START, getId(), ConstraintSet.START,(getMeasuredWidth() - AppContainer.DIVIDER_SIZE)/2);
         }
         //divided = true;
 
         // add the two ConstraintLayouts on both sides of the divider
-        mStart = new MyConstraintLayout(mContext, mDepth + 1, !mOrientation);
+        mStart = new AppContainer(mContext, mDepth + 1, !mOrientation);
         mStart.setId(View.generateViewId());
         addView(mStart);
-        mEnd = new MyConstraintLayout(mContext, mDepth + 1, !mOrientation);
+        mEnd = new AppContainer(mContext, mDepth + 1, !mOrientation);
         mEnd.setId(View.generateViewId());
         addView(mEnd);
         if (mOrientation){
@@ -157,7 +157,7 @@ public class MyConstraintLayout extends ConstraintLayout {
         ColorBlocksActivity.nWindows++;
     }
 
-    public void add(View divider, MyConstraintLayout start, MyConstraintLayout end){
+    public void add(View divider, AppContainer start, AppContainer end){
         ConstraintSet constraintSet = new ConstraintSet();
 
         // add the divider, set distance from top/left
@@ -167,12 +167,12 @@ public class MyConstraintLayout extends ConstraintLayout {
             // horizontal
             constraintSet.connect(mDivider.getId(), ConstraintSet.START, getId(), ConstraintSet.START);
             constraintSet.connect(mDivider.getId(), ConstraintSet.END, getId(), ConstraintSet.END);
-            constraintSet.connect(mDivider.getId(), ConstraintSet.TOP, getId(), ConstraintSet.TOP,(getMeasuredHeight() - MyConstraintLayout.DIVIDER_SIZE)/2);
+            constraintSet.connect(mDivider.getId(), ConstraintSet.TOP, getId(), ConstraintSet.TOP,(getMeasuredHeight() - AppContainer.DIVIDER_SIZE)/2);
         }else{
             // vertical
             constraintSet.connect(mDivider.getId(), ConstraintSet.TOP, getId(), ConstraintSet.TOP);
             constraintSet.connect(mDivider.getId(), ConstraintSet.BOTTOM, getId(), ConstraintSet.BOTTOM);
-            constraintSet.connect(mDivider.getId(), ConstraintSet.START, getId(), ConstraintSet.START,(getMeasuredWidth() - MyConstraintLayout.DIVIDER_SIZE)/2);
+            constraintSet.connect(mDivider.getId(), ConstraintSet.START, getId(), ConstraintSet.START,(getMeasuredWidth() - AppContainer.DIVIDER_SIZE)/2);
         }
         //divided = true;
 
@@ -217,14 +217,14 @@ public class MyConstraintLayout extends ConstraintLayout {
     public void delete(boolean side){
         //remove correct child
         View divider;
-        MyConstraintLayout start, end;
+        AppContainer start, end;
         if (side == START){
             // take content from End child
             mColor = mEnd.mColor;
             if(mEnd.getChildCount() > 1) {
                 divider = mEnd.getChildAt(0);
-                start = (MyConstraintLayout)mEnd.getChildAt(1);
-                end = (MyConstraintLayout)mEnd.getChildAt(2);
+                start = (AppContainer)mEnd.getChildAt(1);
+                end = (AppContainer)mEnd.getChildAt(2);
                 mEnd.removeAllViews();
                 removeView(mStart);
                 removeView(mEnd);
@@ -247,8 +247,8 @@ public class MyConstraintLayout extends ConstraintLayout {
             mColor = mStart.mColor;
             if(mStart.getChildCount() > 1) {
                 divider = mStart.getChildAt(0);
-                start = (MyConstraintLayout)mStart.getChildAt(1);
-                end = (MyConstraintLayout)mStart.getChildAt(2);
+                start = (AppContainer)mStart.getChildAt(1);
+                end = (AppContainer)mStart.getChildAt(2);
                 mStart.removeAllViews();
                 removeView(mStart);
                 removeView(mEnd);
@@ -299,7 +299,7 @@ public class MyConstraintLayout extends ConstraintLayout {
           text = "";
           mSwipeGestureDetector.onTouchEvent(event);
           mPinchGestureDetector.onTouchEvent(event);
-          if(text != "") {
+          if(!text.equals("")) {
               toast.cancel();
               toast = Toast.makeText(mContext, text, Toast.LENGTH_SHORT);
               toast.show();
