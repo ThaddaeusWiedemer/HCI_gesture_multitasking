@@ -60,12 +60,18 @@ public class SwipeGestureDetector extends BaseGestureDetector {
     private PointF mFocusExternal = new PointF();
     private PointF mFocusDeltaExternal = new PointF();
 
+    // type of gesture
+    private int mType;
+    public static final int TYPE_SWIPE = 0;
+    public static final int TYPE_IN_SWIPE = 1;
+    public static final int TYPE_OUT_SWIPE = 2;
+
     // type for in- and out-swipes
     private int mEdge;
-    public static final int LEFT = 1;
-    public static final int RIGHT = 2;
-    public static final int TOP = -1;
-    public static final int BOTTOM = -2;
+    public static final int EDGE_LEFT = 1;
+    public static final int EDGE_RIGHT = 2;
+    public static final int EDGE_TOP = -1;
+    public static final int EDGE_BOTTOM = -2;
 
     // edge-swipe thresholds
     private int thresh_in;
@@ -141,30 +147,39 @@ public class SwipeGestureDetector extends BaseGestureDetector {
                         // determine if it's an in or out swipe
                         final boolean updatePrevious;
                         if (mInitFocus.x < thresh_out && mFocusExternal.x < 0) {
-                            mEdge = LEFT;
+                            mType = TYPE_OUT_SWIPE;
+                            mEdge = EDGE_LEFT;
                             updatePrevious = mListener.onOutSwipe(this);
                         } else if (mInitFocus.x < thresh_in && mFocusExternal.x > 0) {
-                            mEdge = LEFT;
+                            mType = TYPE_IN_SWIPE;
+                            mEdge = EDGE_LEFT;
                             updatePrevious = mListener.onInSwipe(this);
                         } else if (mInitFocus.x > res_x - thresh_out && mFocusExternal.x > 0) {
-                            mEdge = RIGHT;
+                            mType = TYPE_OUT_SWIPE;
+                            mEdge = EDGE_RIGHT;
                             updatePrevious = mListener.onOutSwipe(this);
                         } else if (mInitFocus.x > res_x - thresh_in && mFocusExternal.x < 0) {
-                            mEdge = RIGHT;
+                            mType = TYPE_IN_SWIPE;
+                            mEdge = EDGE_RIGHT;
                             updatePrevious = mListener.onInSwipe(this);
                         } else if (mInitFocus.y < thresh_out && mFocusExternal.y < 0) {
-                            mEdge = TOP;
+                            mType = TYPE_OUT_SWIPE;
+                            mEdge = EDGE_TOP;
                             updatePrevious = mListener.onOutSwipe(this);
                         } else if (mInitFocus.y < thresh_in && mFocusExternal.y > 0) {
-                            mEdge = TOP;
+                            mType = TYPE_IN_SWIPE;
+                            mEdge = EDGE_TOP;
                             updatePrevious = mListener.onInSwipe(this);
                         } else if (mInitFocus.y > res_y - thresh_out && mFocusExternal.y > 0) {
-                            mEdge = BOTTOM;
+                            mType = TYPE_OUT_SWIPE;
+                            mEdge = EDGE_BOTTOM;
                             updatePrevious = mListener.onOutSwipe(this);
                         } else if (mInitFocus.y > res_y - thresh_in && mFocusExternal.y < 0) {
-                            mEdge = BOTTOM;
+                            mType = TYPE_IN_SWIPE;
+                            mEdge = EDGE_BOTTOM;
                             updatePrevious = mListener.onInSwipe(this);
                         } else {
+                            mType = TYPE_SWIPE;
                             updatePrevious = mListener.onSwipe(this);
                         }
                         if (updatePrevious) {
@@ -211,7 +226,11 @@ public class SwipeGestureDetector extends BaseGestureDetector {
         return new PointF(x/pCount, y/pCount);
     }
 
-    public int getType() {
+    public int getmType() {
+        return mType;
+    }
+
+    public int getEdge() {
         return mEdge;
     }
 

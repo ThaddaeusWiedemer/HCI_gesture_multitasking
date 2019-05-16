@@ -3,12 +3,9 @@ package com.gesturemultitasking;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.PointF;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
 import android.util.AttributeSet;
-import android.util.Log;
-import android.view.ContextThemeWrapper;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
@@ -183,7 +180,21 @@ public class MyConstraintLayout extends ConstraintLayout {
         constraintSet.setMargin(mDivider.getId(),anchor, to);
     }
 
-    // handles all touch events and calls the gesture listeners
+    // function gets called in parent before child and lets the parent take possession of a motion
+    // event
+    @Override
+    public boolean onInterceptTouchEvent(MotionEvent event){
+        text = "";
+        mSwipeGestureDetector.onTouchEvent(event);
+        mPinchGestureDetector.onTouchEvent(event);
+        if(text != "") {
+            toast.cancel();
+            toast = Toast.makeText(mContext, text, Toast.LENGTH_SHORT);
+            toast.show();
+        }
+        return false;
+    }
+
     @Override
     public boolean onTouchEvent(MotionEvent event){
         text = "";
@@ -230,7 +241,7 @@ public class MyConstraintLayout extends ConstraintLayout {
         public boolean onInSwipe(SwipeGestureDetector detector) {
             // set orientation for depth 0
             if(mDepth == 0){
-                if(detector.getType() > 0) {
+                if(detector.getEdge() > 0) {
                     mOrientation = ORIENT_V;
                 }else{
                     mOrientation = ORIENT_H;
@@ -238,7 +249,7 @@ public class MyConstraintLayout extends ConstraintLayout {
             }
 
             // add new window on correct side
-            switch ((mOrientation ? -1 : 1) * detector.getType() * (mDepth < 2 ? 1 : 0)) {
+            switch ((mOrientation ? -1 : 1) * detector.getEdge() * (mDepth < 2 ? 1 : 0)) {
                 case 1:
                     add(START);
                     break;
@@ -248,7 +259,7 @@ public class MyConstraintLayout extends ConstraintLayout {
             }
 
             // debug toast
-            text = "InSwipe " + detector.getType() + "\n" +
+            text = "InSwipe " + detector.getEdge() + "\n" +
                     "Start " + detector.getInitialFocus().x + " " + detector.getInitialFocus().y + "\n" +
                     "Delta " + detector.getFocusX() + " " + detector.getFocusY();
             return true;
