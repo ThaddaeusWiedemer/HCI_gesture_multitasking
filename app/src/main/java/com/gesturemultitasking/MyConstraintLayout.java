@@ -244,11 +244,23 @@ public class MyConstraintLayout extends ConstraintLayout {
                 if(detector.getEdge() == SwipeGestureDetector.EDGE_BOTTOM && mEnd.getChildCount() > 1){
                     return false;
                 }
+                if(detector.getEdge() == SwipeGestureDetector.EDGE_RIGHT){
+                    return false;
+                }
+                if(detector.getEdge() == SwipeGestureDetector.EDGE_LEFT){
+                    return false;
+                }
             }else{
                 if(detector.getEdge() == SwipeGestureDetector.EDGE_LEFT && mStart.getChildCount() > 1){
                     return false;
                 }
                 if(detector.getEdge() == SwipeGestureDetector.EDGE_RIGHT && mEnd.getChildCount() > 1){
+                    return false;
+                }
+                if(detector.getEdge() == SwipeGestureDetector.EDGE_TOP){
+                    return false;
+                }
+                if(detector.getEdge() == SwipeGestureDetector.EDGE_BOTTOM){
                     return false;
                 }
             }
