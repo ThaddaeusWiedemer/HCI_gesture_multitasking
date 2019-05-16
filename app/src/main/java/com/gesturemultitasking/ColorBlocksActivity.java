@@ -22,30 +22,6 @@ public class ColorBlocksActivity extends AppCompatActivity {
     private String text = "";
     private Toast toast;
 
-    private static class MyDragShadowBuilder extends View.DragShadowBuilder {
-        private static Drawable shadow;
-
-        public MyDragShadowBuilder(View v) {
-            super(v);
-            shadow = new ColorDrawable(Color.LTGRAY);
-        }
-
-        public void onProvideShadowMetrics(Point size, Point touch) {
-            int width, height;
-
-            width = getView().getWidth() / 2;
-            height = getView().getHeight() / 2;
-
-            shadow.setBounds(0, 0, width, height);
-            size.set(width, height);
-            touch.set(width / 2, height / 2);
-        }
-
-        public void onDrawShadow(Canvas canvas) {
-            shadow.draw(canvas);
-        }
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -69,20 +45,6 @@ public class ColorBlocksActivity extends AppCompatActivity {
         // debug toasts
         Context context = getApplicationContext();
         toast = new Toast(context);
-
-        final FrameLayout frameLayout = findViewById(R.id.left);
-        frameLayout.setTag("ok");
-        frameLayout.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                ClipData.Item item = new ClipData.Item((CharSequence) v.getTag());
-                ClipData dragData = new ClipData((CharSequence) v.getTag(), new String[] {ClipDescription.MIMETYPE_TEXT_PLAIN}, item);
-                View.DragShadowBuilder myShadow = new MyDragShadowBuilder(frameLayout);
-
-                v.startDragAndDrop(dragData, myShadow, null, 0);
-                return true;
-            }
-        });
     }
 
     @Override
