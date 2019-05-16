@@ -3,6 +3,7 @@ package com.gesturemultitasking;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.PointF;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
 import android.util.AttributeSet;
@@ -122,7 +123,7 @@ public class MyConstraintLayout extends ConstraintLayout {
             constraintSet.connect(mEnd.getId(), ConstraintSet.BOTTOM, getId(), ConstraintSet.BOTTOM);
         }
 
-        // apply constraintSet
+        // apply constraintSet-
         constraintSet.applyTo(this);
 
         // draw divider correctly
@@ -137,15 +138,16 @@ public class MyConstraintLayout extends ConstraintLayout {
         Random rnd = new Random();
         int color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
         if(side){
-            mStart.mColor = mColor;
-            mStart.setBackgroundColor(mStart.mColor);
-            mEnd.mColor = color;
-            mEnd.setBackgroundColor(mEnd.mColor);
-
-        }else{
+            // new content on start side
             mStart.mColor = color;
             mStart.setBackgroundColor(mStart.mColor);
             mEnd.mColor = mColor;
+            mEnd.setBackgroundColor(mEnd.mColor);
+        }else{
+            // new content on end side
+            mStart.mColor = mColor;
+            mStart.setBackgroundColor(mStart.mColor);
+            mEnd.mColor = color;
             mEnd.setBackgroundColor(mEnd.mColor);
         }
     }
@@ -169,7 +171,6 @@ public class MyConstraintLayout extends ConstraintLayout {
             toast = Toast.makeText(mContext, text, Toast.LENGTH_SHORT);
             toast.show();
         }
-        add(END);
         return true;
     }
 
@@ -188,6 +189,7 @@ public class MyConstraintLayout extends ConstraintLayout {
     private class SwipeListener extends SwipeGestureDetector.SimpleOnSwipeGestureListener {
         @Override
         public boolean onSwipe(SwipeGestureDetector detector) {
+            //debug toast
             text = "Swipe\n" +
                     "Start " + detector.getInitialFocus().x + " " + detector.getInitialFocus().y + "\n" +
                     "Delta " + detector.getFocusX() + " " + detector.getFocusY();
@@ -195,6 +197,7 @@ public class MyConstraintLayout extends ConstraintLayout {
         }
 
         public boolean onOutSwipe(SwipeGestureDetector detector) {
+            // debug toast
             text = "OutSwipe\n" +
                     "Start " + detector.getInitialFocus().x + " " + detector.getInitialFocus().y + "\n" +
                     "Delta " + detector.getFocusX() + " " + detector.getFocusY();
@@ -202,6 +205,26 @@ public class MyConstraintLayout extends ConstraintLayout {
         }
 
         public boolean onInSwipe(SwipeGestureDetector detector) {
+            // set orientation for depth 0
+            if(mDepth == 0){
+                if(detector.getType() > 0) {
+                    mOrientation = ORIENT_V;
+                }else{
+                    mOrientation = ORIENT_H;
+                }
+            }
+
+            // add new window on correct side
+            switch((mOrientation ? -1 : 1) * detector.getType() * (mDepth < 2 ? 1 : 0)){
+                case 1:
+                    add(START);
+                    break;
+                case 2:
+                    add(END);
+                    break;
+            }
+
+            // debug toast
             text = "InSwipe\n" +
                     "Start " + detector.getInitialFocus().x + " " + detector.getInitialFocus().y + "\n" +
                     "Delta " + detector.getFocusX() + " " + detector.getFocusY();

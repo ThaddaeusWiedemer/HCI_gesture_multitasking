@@ -56,9 +56,14 @@ public class SwipeGestureDetector extends BaseGestureDetector {
 
     private PointF mCurrFocusInternal;
     private PointF mPrevFocusInternal;
+    private int mType;
     private PointF mInitFocus = new PointF();
     private PointF mFocusExternal = new PointF();
     private PointF mFocusDeltaExternal = new PointF();
+    public static final int LEFT = 1;
+    public static final int RIGHT = 2;
+    public static final int TOP = -1;
+    public static final int BOTTOM = -2;
 
 
     public SwipeGestureDetector(Context context, OnSwipeGestureListener listener) {
@@ -111,20 +116,28 @@ public class SwipeGestureDetector extends BaseGestureDetector {
                         int y_upper = 1920 - y_lower;
                         final boolean updatePrevious;
                         if (mInitFocus.x < x_lower && mFocusExternal.x < 0) {
+                            mType = LEFT;
                             updatePrevious = mListener.onOutSwipe(this);
                         } else if (mInitFocus.x < x_lower && mFocusExternal.x > 0) {
+                            mType = LEFT;
                             updatePrevious = mListener.onInSwipe(this);
                         } else if (mInitFocus.x > x_upper && mFocusExternal.x > 0) {
+                            mType = RIGHT;
                             updatePrevious = mListener.onOutSwipe(this);
                         } else if (mInitFocus.x > x_upper && mFocusExternal.x < 0) {
+                            mType = RIGHT;
                             updatePrevious = mListener.onInSwipe(this);
                         } else if (mInitFocus.y < y_lower && mFocusExternal.y < 0) {
+                            mType = TOP;
                             updatePrevious = mListener.onOutSwipe(this);
                         } else if (mInitFocus.y < y_lower && mFocusExternal.y > 0) {
+                            mType = TOP;
                             updatePrevious = mListener.onInSwipe(this);
                         } else if (mInitFocus.y > y_upper && mFocusExternal.y > 0) {
+                            mType = BOTTOM;
                             updatePrevious = mListener.onOutSwipe(this);
                         } else if (mInitFocus.y > y_upper && mFocusExternal.y < 0) {
+                            mType = BOTTOM;
                             updatePrevious = mListener.onInSwipe(this);
                         } else {
                             updatePrevious = mListener.onSwipe(this);
@@ -171,6 +184,10 @@ public class SwipeGestureDetector extends BaseGestureDetector {
         }
 
         return new PointF(x/pCount, y/pCount);
+    }
+
+    public int getType() {
+        return mType;
     }
 
     public float getFocusX() {
