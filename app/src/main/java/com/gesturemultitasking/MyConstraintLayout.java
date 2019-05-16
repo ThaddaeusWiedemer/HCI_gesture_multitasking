@@ -154,6 +154,7 @@ public class MyConstraintLayout extends ConstraintLayout {
             mEnd.mColor = color;
             mEnd.setBackgroundColor(mEnd.mColor);
         }
+        ColorBlocksActivity.nWindows++;
     }
 
     @SuppressLint("ResourceAsColor")
@@ -178,6 +179,7 @@ public class MyConstraintLayout extends ConstraintLayout {
 
         // update content
         setBackgroundColor(mColor);
+        ColorBlocksActivity.nWindows--;
     }
 
     private void moveSplit(int to){
