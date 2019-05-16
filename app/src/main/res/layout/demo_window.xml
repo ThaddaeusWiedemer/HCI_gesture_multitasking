@@ -1,17 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-        android:id="@+id/left"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:background="#FF0000"
-        android:stretchColumns="true"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/imageView3"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+    android:layout_height="match_parent"
+    android:layout_rowWeight="1"
+    android:layout_columnWeight="1"
+    >
 
         <Button
             android:id="@+id/top_but"
@@ -38,7 +32,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="n"
-            android:textColor="#FFEBEE"
+            android:textColor="#000000"
             android:textSize="30sp"
             app:layout_constraintBottom_toTopOf="@+id/bottom_but"
             app:layout_constraintEnd_toStartOf="@+id/right_but"
@@ -65,4 +59,4 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
-</merge>
+</android.support.constraint.ConstraintLayout>
