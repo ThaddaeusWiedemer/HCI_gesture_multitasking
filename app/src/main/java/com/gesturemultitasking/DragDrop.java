@@ -19,7 +19,7 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class ColorBlocksActivity extends AppCompatActivity {
+public class DragDrop extends AppCompatActivity {
 
     private ScaleGestureDetector mScaleGestureDetector;
     private SwipeGestureDetector mMoveGestureDetector;
@@ -67,7 +67,7 @@ public class ColorBlocksActivity extends AppCompatActivity {
         //getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
         //        WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        setContentView(R.layout.activity_color_blocks);
+        setContentView(R.layout.activity_drag_drop);
 
         // setup gesture detectors
         mScaleGestureDetector = new ScaleGestureDetector(this, new PinchListener());
@@ -111,8 +111,8 @@ public class ColorBlocksActivity extends AppCompatActivity {
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
             text = "Pinch\n" +
-                "Focus " + detector.getFocusX() + " " + detector.getFocusY() + "\n" +
-                "Span " + detector.getCurrentSpanX() + " " + detector.getCurrentSpanY();
+                    "Focus " + detector.getFocusX() + " " + detector.getFocusY() + "\n" +
+                    "Span " + detector.getCurrentSpanX() + " " + detector.getCurrentSpanY();
             return true;
         }
     }
@@ -122,22 +122,22 @@ public class ColorBlocksActivity extends AppCompatActivity {
         @Override
         public boolean onSwipe(SwipeGestureDetector detector) {
             text = "Swipe\n" +
-                "Start " + detector.getInitialFocus().x + " " + detector.getInitialFocus().y + "\n" +
-                "Delta " + detector.getFocusX() + " " + detector.getFocusY();
+                    "Start " + detector.getInitialFocus().x + " " + detector.getInitialFocus().y + "\n" +
+                    "Delta " + detector.getFocusX() + " " + detector.getFocusY();
             return true;
         }
 
         public boolean onOutSwipe(SwipeGestureDetector detector) {
             text = "OutSwipe\n" +
-                "Start " + detector.getInitialFocus().x + " " + detector.getInitialFocus().y + "\n" +
-                "Delta " + detector.getFocusX() + " " + detector.getFocusY();
+                    "Start " + detector.getInitialFocus().x + " " + detector.getInitialFocus().y + "\n" +
+                    "Delta " + detector.getFocusX() + " " + detector.getFocusY();
             return true;
         }
 
         public boolean onInSwipe(SwipeGestureDetector detector) {
             text = "InSwipe\n" +
-                "Start " + detector.getInitialFocus().x + " " + detector.getInitialFocus().y + "\n" +
-                "Delta " + detector.getFocusX() + " " + detector.getFocusY();
+                    "Start " + detector.getInitialFocus().x + " " + detector.getInitialFocus().y + "\n" +
+                    "Delta " + detector.getFocusX() + " " + detector.getFocusY();
             return true;
         }
     }

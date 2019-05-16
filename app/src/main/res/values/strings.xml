@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Gesture Multi Tasking</string>
     <string name="title_activity_color_blocks">ColorBlocksActivity</string>
+    <string name="title_drag_drop">DragDrop</string>
     <string name="top">top</string>
     <string name="left">left</string>
     <string name="right">right</string>
