@@ -152,12 +152,35 @@ public class MyConstraintLayout extends ConstraintLayout {
         }
     }
 
-    private void delete(){
+    private void delete(boolean side){
+        // remove divider from layout
+        removeView(mDivider);
+        mDivider = null;
 
+        //remove correct child
+        if (side == START){
+            removeView(mStart);
+            mStart = null;
+            // take content from End child
+            mColor = mEnd.mColor;
+        } else {
+            removeView(mEnd);
+            mEnd = null;
+            // take content from Start child
+            mColor = mStart.mColor;
+        }
     }
 
-    private void moveSplit(){
+    private void moveSplit(int to){
+        ConstraintSet constraintSet = new ConstraintSet();
+        constraintSet.clone(this);
 
+        int anchor = LayoutParams.START;
+        if (mOrientation == ORIENT_H) {
+            anchor = LayoutParams.TOP;
+        }
+
+        constraintSet.setMargin(mDivider.getId(),anchor, to);
     }
 
     // handles all touch events and calls the gesture listeners
