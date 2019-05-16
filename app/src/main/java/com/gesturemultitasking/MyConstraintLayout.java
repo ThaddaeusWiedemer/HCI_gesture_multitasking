@@ -31,7 +31,7 @@ public class MyConstraintLayout extends ConstraintLayout {
     public final static boolean ORIENT_H = true;
     public final static boolean END = false;
     public final static boolean START = true;
-    public final static int DIVIDER_SIZE = 20;
+    public final static int DIVIDER_SIZE = 4;
 
 
     // gesture handling
@@ -67,7 +67,7 @@ public class MyConstraintLayout extends ConstraintLayout {
 
         // initialize gesture detectors
         mPinchGestureDetector = new ScaleGestureDetector(context, new PinchListener());
-        mSwipeGestureDetector = new SwipeGestureDetector(context, new SwipeListener());
+        mSwipeGestureDetector = new SwipeGestureDetector(context, new SwipeListener(), 50, 400, 2160, 1920);
 
         // debug toasts
         mContext = context;
@@ -123,7 +123,7 @@ public class MyConstraintLayout extends ConstraintLayout {
             constraintSet.connect(mEnd.getId(), ConstraintSet.BOTTOM, getId(), ConstraintSet.BOTTOM);
         }
 
-        // apply constraintSet-
+        // apply constraintSet
         constraintSet.applyTo(this);
 
         // draw divider correctly
@@ -132,7 +132,7 @@ public class MyConstraintLayout extends ConstraintLayout {
         }else{
             mDivider.getLayoutParams().width = DIVIDER_SIZE;
         }
-        mDivider.setBackgroundColor(android.R.color.black);
+        mDivider.setBackgroundColor(Color.argb(255, 0, 0, 0));
 
         // handle content
         Random rnd = new Random();
@@ -215,7 +215,7 @@ public class MyConstraintLayout extends ConstraintLayout {
             }
 
             // add new window on correct side
-            switch((mOrientation ? -1 : 1) * detector.getType() * (mDepth < 2 ? 1 : 0)){
+            switch ((mOrientation ? -1 : 1) * detector.getType() * (mDepth < 2 ? 1 : 0)) {
                 case 1:
                     add(START);
                     break;
@@ -225,7 +225,7 @@ public class MyConstraintLayout extends ConstraintLayout {
             }
 
             // debug toast
-            text = "InSwipe\n" +
+            text = "InSwipe " + detector.getType() + "\n" +
                     "Start " + detector.getInitialFocus().x + " " + detector.getInitialFocus().y + "\n" +
                     "Delta " + detector.getFocusX() + " " + detector.getFocusY();
             return true;
