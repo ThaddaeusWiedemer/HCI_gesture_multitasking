@@ -178,34 +178,34 @@ public class SwipeGestureDetector extends BaseGestureDetector {
                         } else if (mInitFocus.x < thresh_in && mFocusExternal.x > 0) {
                             mType = TYPE_IN_SWIPE;
                             mEdge = EDGE_LEFT;
-                            isMine = mListener.isMySwipe(this);
+                            isMine = mListener.isMyInSwipe(this);
                         } else if (mInitFocus.x > res_x - thresh_out && mFocusExternal.x > 0) {
                             mType = TYPE_OUT_SWIPE;
                             mEdge = EDGE_RIGHT;
-                            isMine = mListener.isMySwipe(this);
+                            isMine = mListener.isMyOutSwipe(this);
                         } else if (mInitFocus.x > res_x - thresh_in && mFocusExternal.x < 0) {
                             mType = TYPE_IN_SWIPE;
                             mEdge = EDGE_RIGHT;
-                            isMine = mListener.isMySwipe(this);
+                            isMine = mListener.isMyInSwipe(this);
                         } else if (mInitFocus.y < thresh_out && mFocusExternal.y < 0) {
                             mType = TYPE_OUT_SWIPE;
                             mEdge = EDGE_TOP;
-                            isMine = mListener.isMySwipe(this);
+                            isMine = mListener.isMyOutSwipe(this);
                         } else if (mInitFocus.y < thresh_in && mFocusExternal.y > 0) {
                             mType = TYPE_IN_SWIPE;
                             mEdge = EDGE_TOP;
-                            isMine = mListener.isMySwipe(this);
+                            isMine = mListener.isMyInSwipe(this);
                         } else if (mInitFocus.y > res_y - thresh_out && mFocusExternal.y > 0) {
                             mType = TYPE_OUT_SWIPE;
                             mEdge = EDGE_BOTTOM;
-                            isMine = mListener.isMySwipe(this);
+                            isMine = mListener.isMyOutSwipe(this);
                         } else if (mInitFocus.y > res_y - thresh_in && mFocusExternal.y < 0) {
                             mType = TYPE_IN_SWIPE;
                             mEdge = EDGE_BOTTOM;
-                            isMine = mListener.isMySwipe(this);
+                            isMine = mListener.isMyInSwipe(this);
                         } else {
                             mType = TYPE_SWIPE;
-                            isMine = mListener.isMySwipe(this);
+                            isMine = mListener.isMyOutSwipe(this);
                         }
                         if (isMine) {
                             mPrevEvent.recycle();
@@ -246,31 +246,31 @@ public class SwipeGestureDetector extends BaseGestureDetector {
                         } else if (mInitFocus.x < thresh_in && mFocusExternal.x > 0) {
                             mType = TYPE_IN_SWIPE;
                             mEdge = EDGE_LEFT;
-                            updatePrevious = mListener.onSwipe(this);
+                            updatePrevious = mListener.onInSwipe(this);
                         } else if (mInitFocus.x > res_x - thresh_out && mFocusExternal.x > 0) {
                             mType = TYPE_OUT_SWIPE;
                             mEdge = EDGE_RIGHT;
-                            updatePrevious = mListener.onSwipe(this);
+                            updatePrevious = mListener.onOutSwipe(this);
                         } else if (mInitFocus.x > res_x - thresh_in && mFocusExternal.x < 0) {
                             mType = TYPE_IN_SWIPE;
                             mEdge = EDGE_RIGHT;
-                            updatePrevious = mListener.onSwipe(this);
+                            updatePrevious = mListener.onInSwipe(this);
                         } else if (mInitFocus.y < thresh_out && mFocusExternal.y < 0) {
                             mType = TYPE_OUT_SWIPE;
                             mEdge = EDGE_TOP;
-                            updatePrevious = mListener.onSwipe(this);
+                            updatePrevious = mListener.onOutSwipe(this);
                         } else if (mInitFocus.y < thresh_in && mFocusExternal.y > 0) {
                             mType = TYPE_IN_SWIPE;
                             mEdge = EDGE_TOP;
-                            updatePrevious = mListener.onSwipe(this);
+                            updatePrevious = mListener.onInSwipe(this);
                         } else if (mInitFocus.y > res_y - thresh_out && mFocusExternal.y > 0) {
                             mType = TYPE_OUT_SWIPE;
                             mEdge = EDGE_BOTTOM;
-                            updatePrevious = mListener.onSwipe(this);
+                            updatePrevious = mListener.onOutSwipe(this);
                         } else if (mInitFocus.y > res_y - thresh_in && mFocusExternal.y < 0) {
                             mType = TYPE_IN_SWIPE;
                             mEdge = EDGE_BOTTOM;
-                            updatePrevious = mListener.onSwipe(this);
+                            updatePrevious = mListener.onInSwipe(this);
                         } else {
                             mType = TYPE_SWIPE;
                             updatePrevious = mListener.onSwipe(this);
