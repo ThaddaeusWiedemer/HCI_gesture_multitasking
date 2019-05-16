@@ -60,7 +60,7 @@ public class MyConstraintLayout extends ConstraintLayout {
     public MyConstraintLayout(Context context, AttributeSet attrs, int defStyleAttr, int depth, boolean orientation){
         super(context, attrs, defStyleAttr);
 
-        divided = false;
+        //divided = false;
         mDepth = depth;
         mOrientation = orientation;
 
@@ -77,7 +77,7 @@ public class MyConstraintLayout extends ConstraintLayout {
 
     @SuppressLint("ResourceAsColor")
     public void add(boolean side){
-        if(divided || ColorBlocksActivity.nWindows >= 3) {
+        if(ColorBlocksActivity.nWindows >= 3) {
             return;
         }
 
@@ -98,7 +98,7 @@ public class MyConstraintLayout extends ConstraintLayout {
             constraintSet.connect(mDivider.getId(), ConstraintSet.BOTTOM, getId(), ConstraintSet.BOTTOM);
             constraintSet.connect(mDivider.getId(), ConstraintSet.START, getId(), ConstraintSet.START,(getMeasuredWidth() - MyConstraintLayout.DIVIDER_SIZE)/2);
         }
-        divided = true;
+        //divided = true;
 
         // add the two ConstraintLayouts on both sides of the divider
         mStart = new MyConstraintLayout(mContext, mDepth + 1, !mOrientation);
@@ -157,26 +157,116 @@ public class MyConstraintLayout extends ConstraintLayout {
         ColorBlocksActivity.nWindows++;
     }
 
+    public void add(View divider, MyConstraintLayout start, MyConstraintLayout end){
+        ConstraintSet constraintSet = new ConstraintSet();
+
+        // add the divider, set distance from top/left
+        mDivider = divider;
+        addView(mDivider);
+        if (mOrientation){
+            // horizontal
+            constraintSet.connect(mDivider.getId(), ConstraintSet.START, getId(), ConstraintSet.START);
+            constraintSet.connect(mDivider.getId(), ConstraintSet.END, getId(), ConstraintSet.END);
+            constraintSet.connect(mDivider.getId(), ConstraintSet.TOP, getId(), ConstraintSet.TOP,(getMeasuredHeight() - MyConstraintLayout.DIVIDER_SIZE)/2);
+        }else{
+            // vertical
+            constraintSet.connect(mDivider.getId(), ConstraintSet.TOP, getId(), ConstraintSet.TOP);
+            constraintSet.connect(mDivider.getId(), ConstraintSet.BOTTOM, getId(), ConstraintSet.BOTTOM);
+            constraintSet.connect(mDivider.getId(), ConstraintSet.START, getId(), ConstraintSet.START,(getMeasuredWidth() - MyConstraintLayout.DIVIDER_SIZE)/2);
+        }
+        //divided = true;
+
+        // add the two ConstraintLayouts on both sides of the divider
+        mStart = start;
+        addView(mStart);
+        mEnd = end;
+        addView(mEnd);
+        if (mOrientation){
+            constraintSet.connect(mStart.getId(), ConstraintSet.START, getId(), ConstraintSet.START);
+            constraintSet.connect(mStart.getId(), ConstraintSet.END, getId(), ConstraintSet.END);
+            constraintSet.connect(mStart.getId(), ConstraintSet.TOP, getId(), ConstraintSet.TOP);
+            constraintSet.connect(mStart.getId(), ConstraintSet.BOTTOM, mDivider.getId(), ConstraintSet.TOP);
+            constraintSet.connect(mEnd.getId(), ConstraintSet.START, getId(), ConstraintSet.START);
+            constraintSet.connect(mEnd.getId(), ConstraintSet.END, getId(), ConstraintSet.END);
+            constraintSet.connect(mEnd.getId(), ConstraintSet.TOP, mDivider.getId(), ConstraintSet.BOTTOM);
+            constraintSet.connect(mEnd.getId(), ConstraintSet.BOTTOM, getId(), ConstraintSet.BOTTOM);
+        }else{
+            constraintSet.connect(mStart.getId(), ConstraintSet.START, getId(), ConstraintSet.START);
+            constraintSet.connect(mStart.getId(), ConstraintSet.END, mDivider.getId(), ConstraintSet.START);
+            constraintSet.connect(mStart.getId(), ConstraintSet.TOP, getId(), ConstraintSet.TOP);
+            constraintSet.connect(mStart.getId(), ConstraintSet.BOTTOM, getId(), ConstraintSet.BOTTOM);
+            constraintSet.connect(mEnd.getId(), ConstraintSet.START, mDivider.getId(), ConstraintSet.END);
+            constraintSet.connect(mEnd.getId(), ConstraintSet.END, getId(), ConstraintSet.END);
+            constraintSet.connect(mEnd.getId(), ConstraintSet.TOP, getId(), ConstraintSet.TOP);
+            constraintSet.connect(mEnd.getId(), ConstraintSet.BOTTOM, getId(), ConstraintSet.BOTTOM);
+        }
+
+        // apply constraintSet
+        constraintSet.applyTo(this);
+
+        // draw divider correctly
+        if(mOrientation){
+            mDivider.getLayoutParams().height = DIVIDER_SIZE;
+        }else{
+            mDivider.getLayoutParams().width = DIVIDER_SIZE;
+        }
+        mDivider.setBackgroundColor(Color.argb(255, 0, 0, 0));
+    }
+
     @SuppressLint("ResourceAsColor")
     public void delete(boolean side){
         //remove correct child
+        View divider;
+        MyConstraintLayout start, end;
         if (side == START){
             // take content from End child
             mColor = mEnd.mColor;
+            if(mEnd.getChildCount() > 1) {
+                divider = mEnd.getChildAt(0);
+                start = (MyConstraintLayout)mEnd.getChildAt(1);
+                end = (MyConstraintLayout)mEnd.getChildAt(2);
+                mEnd.removeAllViews();
+                removeView(mStart);
+                removeView(mEnd);
+                removeView(mDivider);
+                mOrientation = !mOrientation;
+                start.mDepth--;
+                end.mDepth--;
+                add(divider, start, end);
+            }else {
+                removeView(mStart);
+                removeView(mEnd);
+                removeView(mDivider);
+                mDivider = null;
+                mStart = null;
+                mEnd = null;
+                //divided = false;
+            }
         } else {
             // take content from Start child
             mColor = mStart.mColor;
+            if(mStart.getChildCount() > 1) {
+                divider = mStart.getChildAt(0);
+                start = (MyConstraintLayout)mStart.getChildAt(1);
+                end = (MyConstraintLayout)mStart.getChildAt(2);
+                mStart.removeAllViews();
+                removeView(mStart);
+                removeView(mEnd);
+                removeView(mDivider);
+                mOrientation = !mOrientation;
+                start.mDepth--;
+                end.mDepth--;
+                add(divider, start, end);
+            }else {
+                removeView(mStart);
+                removeView(mEnd);
+                removeView(mDivider);
+                mDivider = null;
+                mStart = null;
+                mEnd = null;
+                //divided = false;
+            }
         }
-
-        // remove layer
-        removeView(mStart);
-        removeView(mEnd);
-        removeView(mDivider);
-        mDivider = null;
-        divided = false;
-        mStart = null;
-        mEnd = null;
-
         // update content
         setBackgroundColor(mColor);
         ColorBlocksActivity.nWindows--;
