@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.gesturemultitasking">
 
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
     <application
         android:allowBackup="true"
@@ -11,21 +11,23 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
-        <activity android:name=".tiles"></activity>
+        <activity android:name=".DragDrop"
+            android:exported="true"
+            android:label="@string/title_drag_drop">
+        </activity>
+        <activity android:name=".tiles" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
-                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         <activity
             android:name=".ColorBlocksActivity"
-
-            android:label="@string/title_activity_color_blocks"
-            android:exported="true">
-        </activity>
+            android:exported="true"
+            android:label="@string/title_activity_color_blocks"></activity>
     </application>
 
 </manifest>
