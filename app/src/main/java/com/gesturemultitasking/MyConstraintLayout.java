@@ -152,10 +152,7 @@ public class MyConstraintLayout extends ConstraintLayout {
         }
     }
 
-    private void delete(boolean side){
-        // remove divider from layout
-        removeView(mDivider);
-        mDivider = null;
+    public void delete(boolean side){
 
         //remove correct child
         if (side == START){
@@ -169,6 +166,10 @@ public class MyConstraintLayout extends ConstraintLayout {
             // take content from Start child
             mColor = mStart.mColor;
         }
+
+        // remove divider from layout
+        removeView(mDivider);
+        mDivider = null;
     }
 
     private void moveSplit(int to){
@@ -181,6 +182,7 @@ public class MyConstraintLayout extends ConstraintLayout {
         }
 
         constraintSet.setMargin(mDivider.getId(),anchor, to);
+        constraintSet.applyTo(this);
     }
 
     // handles all touch events and calls the gesture listeners
@@ -220,6 +222,21 @@ public class MyConstraintLayout extends ConstraintLayout {
         }
 
         public boolean onOutSwipe(SwipeGestureDetector detector) {
+            // orientation: horizontal -> true
+            //              vertical -> false
+            //getTyoe : left -> 1
+            //          right -> 2
+            //          top   -> -1
+            //          bottom ->  -2
+            switch((mOrientation ? -1 : 1) * detector.getType() * (getChildCount() > 1 ? 1 : 0)){
+                case 1:
+                    delete(START);
+                    break;
+                case 2:
+                    delete(END);
+                    break;
+            }
+
             // debug toast
             text = "OutSwipe\n" +
                     "Start " + detector.getInitialFocus().x + " " + detector.getInitialFocus().y + "\n" +
