@@ -14,6 +14,7 @@ import android.widget.Toast;
 import java.util.Random;
 
 public class MyConstraintLayout extends ConstraintLayout {
+    private boolean divided;
     public int mDepth;
     public boolean mOrientation;
     public View mDivider;
@@ -59,6 +60,7 @@ public class MyConstraintLayout extends ConstraintLayout {
     public MyConstraintLayout(Context context, AttributeSet attrs, int defStyleAttr, int depth, boolean orientation){
         super(context, attrs, defStyleAttr);
 
+        divided = false;
         mDepth = depth;
         mOrientation = orientation;
 
@@ -75,6 +77,10 @@ public class MyConstraintLayout extends ConstraintLayout {
 
     @SuppressLint("ResourceAsColor")
     public void add(boolean side){
+        if(divided || ColorBlocksActivity.nWindows >= 3) {
+            return;
+        }
+
         ConstraintSet constraintSet = new ConstraintSet();
 
         // add the divider, set distance from top/left
@@ -92,6 +98,7 @@ public class MyConstraintLayout extends ConstraintLayout {
             constraintSet.connect(mDivider.getId(), ConstraintSet.BOTTOM, getId(), ConstraintSet.BOTTOM);
             constraintSet.connect(mDivider.getId(), ConstraintSet.START, getId(), ConstraintSet.START,(getMeasuredWidth() - MyConstraintLayout.DIVIDER_SIZE)/2);
         }
+        divided = true;
 
         // add the two ConstraintLayouts on both sides of the divider
         mStart = new MyConstraintLayout(mContext, mDepth + 1, !mOrientation);
@@ -167,6 +174,7 @@ public class MyConstraintLayout extends ConstraintLayout {
         // remove divider from layout
         removeView(mDivider);
         mDivider = null;
+        divided = false;
     }
 
     private void moveSplit(int to){
