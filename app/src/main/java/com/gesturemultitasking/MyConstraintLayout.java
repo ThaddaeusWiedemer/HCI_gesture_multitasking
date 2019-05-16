@@ -156,25 +156,28 @@ public class MyConstraintLayout extends ConstraintLayout {
         }
     }
 
+    @SuppressLint("ResourceAsColor")
     public void delete(boolean side){
-
         //remove correct child
         if (side == START){
-            removeView(mStart);
-            mStart = null;
             // take content from End child
             mColor = mEnd.mColor;
         } else {
-            removeView(mEnd);
-            mEnd = null;
             // take content from Start child
             mColor = mStart.mColor;
         }
 
-        // remove divider from layout
+        // remove layer
+        removeView(mStart);
+        removeView(mEnd);
         removeView(mDivider);
         mDivider = null;
         divided = false;
+        mStart = null;
+        mEnd = null;
+
+        // update content
+        setBackgroundColor(mColor);
     }
 
     private void moveSplit(int to){
@@ -234,24 +237,25 @@ public class MyConstraintLayout extends ConstraintLayout {
             return true;
         }
 
-        public boolean onOutSwipe(SwipeGestureDetector detector) {
-            // orientation: horizontal -> true
-            //              vertical -> false
-            //getTyoe : left -> 1
-            //          right -> 2
-            //          top   -> -1
-            //          bottom ->  -2
-            // don't handle if this element doesn't have children
+        @Override
+        public boolean isMyOutSwipe(SwipeGestureDetector detector) {
+            // don't handle at all, if this element doesn't have children
             if(getChildCount() <= 1){
                 return false;
             }
 
-            // don't handle, if this child has children
+            // if this element's child has children, let the child deal with it
             if(mOrientation == ORIENT_H){
                 if(detector.getEdge() == SwipeGestureDetector.EDGE_TOP && mStart.getChildCount() > 1){
                     return false;
                 }
                 if(detector.getEdge() == SwipeGestureDetector.EDGE_BOTTOM && mEnd.getChildCount() > 1){
+                    return false;
+                }
+                if(detector.getEdge() == SwipeGestureDetector.EDGE_RIGHT){
+                    return false;
+                }
+                if(detector.getEdge() == SwipeGestureDetector.EDGE_LEFT){
                     return false;
                 }
             }else{
@@ -261,8 +265,25 @@ public class MyConstraintLayout extends ConstraintLayout {
                 if(detector.getEdge() == SwipeGestureDetector.EDGE_RIGHT && mEnd.getChildCount() > 1){
                     return false;
                 }
+                if(detector.getEdge() == SwipeGestureDetector.EDGE_TOP){
+                    return false;
+                }
+                if(detector.getEdge() == SwipeGestureDetector.EDGE_BOTTOM){
+                    return false;
+                }
             }
 
+            return true;
+        }
+
+        @Override
+        public boolean onOutSwipeBegin(SwipeGestureDetector detector) {
+            // orientation: horizontal -> true
+            //              vertical -> false
+            //getTyoe : left -> 1
+            //          right -> 2
+            //          top   -> -1
+            //          bottom ->  -2
             switch((mOrientation ? -1 : 1) * detector.getEdge() * (getChildCount() > 1 ? 1 : 0)){
                 case 1:
                     delete(START);
@@ -273,18 +294,20 @@ public class MyConstraintLayout extends ConstraintLayout {
             }
 
             // debug toast
-            text = "OutSwipe\n" +
+            text = "OutSwipe " + detector.getEdge() + "\n" +
                     "Start " + detector.getInitialFocus().x + " " + detector.getInitialFocus().y + "\n" +
                     "Delta " + detector.getFocusX() + " " + detector.getFocusY();
             return true;
         }
 
+        @Override
         public boolean isMyInSwipe(SwipeGestureDetector detector){
             // only handle the gesture if this is the innermost element
             return getChildCount() <= 1;
         }
 
-        public boolean onInSwipe(SwipeGestureDetector detector) {
+        @Override
+        public boolean onInSwipeBegin(SwipeGestureDetector detector) {
             // set orientation for depth 0
             if(mDepth == 0){
                 if(detector.getEdge() > 0) {
