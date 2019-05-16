@@ -44,6 +44,7 @@ public class ColorBlocksActivity extends AppCompatActivity {
         ConstraintLayout root = findViewById(R.id.root);
         MyConstraintLayout first = (MyConstraintLayout)root.getChildAt(0);
 
+
         // debug toasts
         Context context = getApplicationContext();
         toast = new Toast(context);
