@@ -19,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class ColorBlocksActivity extends AppCompatActivity {
+    public static int nWindows;
     private String text = "";
     private Toast toast;
 
@@ -39,6 +40,7 @@ public class ColorBlocksActivity extends AppCompatActivity {
 
         // Initial Layout
         setContentView(R.layout.activity_color_blocks);
+        nWindows = 1;
         ConstraintLayout root = findViewById(R.id.root);
         MyConstraintLayout first = (MyConstraintLayout)root.getChildAt(0);
 

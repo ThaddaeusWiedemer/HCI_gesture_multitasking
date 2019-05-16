@@ -17,6 +17,7 @@ import android.widget.Toast;
 import java.util.Random;
 
 public class MyConstraintLayout extends ConstraintLayout {
+    private boolean divided;
     public int mDepth;
     public boolean mOrientation;
     public View mDivider;
@@ -62,6 +63,7 @@ public class MyConstraintLayout extends ConstraintLayout {
     public MyConstraintLayout(Context context, AttributeSet attrs, int defStyleAttr, int depth, boolean orientation){
         super(context, attrs, defStyleAttr);
 
+        divided = false;
         mDepth = depth;
         mOrientation = orientation;
 
@@ -78,6 +80,13 @@ public class MyConstraintLayout extends ConstraintLayout {
 
     @SuppressLint("ResourceAsColor")
     public void add(boolean side){
+        if(divided || ColorBlocksActivity.nWindows >= 3) {
+//            toast.cancel();
+//            toast = Toast.makeText(mContext, "No more windows", Toast.LENGTH_SHORT);
+//            toast.show();
+            return;
+        }
+
         ConstraintSet constraintSet = new ConstraintSet();
 
         // add the divider, set distance from top/left
@@ -95,6 +104,7 @@ public class MyConstraintLayout extends ConstraintLayout {
             constraintSet.connect(mDivider.getId(), ConstraintSet.BOTTOM, getId(), ConstraintSet.BOTTOM);
             constraintSet.connect(mDivider.getId(), ConstraintSet.START, getId(), ConstraintSet.START,(getMeasuredWidth() - MyConstraintLayout.DIVIDER_SIZE)/2);
         }
+        divided = true;
 
         // add the two ConstraintLayouts on both sides of the divider
         mStart = new MyConstraintLayout(mContext, mDepth + 1, !mOrientation);
@@ -103,7 +113,7 @@ public class MyConstraintLayout extends ConstraintLayout {
         mEnd = new MyConstraintLayout(mContext, mDepth + 1, !mOrientation);
         mEnd.setId(View.generateViewId());
         addView(mEnd);
-        if (mOrientation){
+        if (mOrientation) {
             constraintSet.connect(mStart.getId(), ConstraintSet.START, getId(), ConstraintSet.START);
             constraintSet.connect(mStart.getId(), ConstraintSet.END, getId(), ConstraintSet.END);
             constraintSet.connect(mStart.getId(), ConstraintSet.TOP, getId(), ConstraintSet.TOP);
@@ -112,7 +122,7 @@ public class MyConstraintLayout extends ConstraintLayout {
             constraintSet.connect(mEnd.getId(), ConstraintSet.END, getId(), ConstraintSet.END);
             constraintSet.connect(mEnd.getId(), ConstraintSet.TOP, mDivider.getId(), ConstraintSet.BOTTOM);
             constraintSet.connect(mEnd.getId(), ConstraintSet.BOTTOM, getId(), ConstraintSet.BOTTOM);
-        }else{
+        } else {
             constraintSet.connect(mStart.getId(), ConstraintSet.START, getId(), ConstraintSet.START);
             constraintSet.connect(mStart.getId(), ConstraintSet.END, mDivider.getId(), ConstraintSet.START);
             constraintSet.connect(mStart.getId(), ConstraintSet.TOP, getId(), ConstraintSet.TOP);
@@ -150,12 +160,14 @@ public class MyConstraintLayout extends ConstraintLayout {
             mEnd.mColor = color;
             mEnd.setBackgroundColor(mEnd.mColor);
         }
+        ColorBlocksActivity.nWindows++;
     }
 
     private void delete(boolean side){
         // remove divider from layout
         removeView(mDivider);
         mDivider = null;
+        divided = false;
 
         //remove correct child
         if (side == START){
@@ -169,6 +181,7 @@ public class MyConstraintLayout extends ConstraintLayout {
             // take content from Start child
             mColor = mStart.mColor;
         }
+        ColorBlocksActivity.nWindows--;
     }
 
     private void moveSplit(int to){
@@ -190,9 +203,9 @@ public class MyConstraintLayout extends ConstraintLayout {
         mSwipeGestureDetector.onTouchEvent(event);
         mPinchGestureDetector.onTouchEvent(event);
         if(text != "") {
-            toast.cancel();
-            toast = Toast.makeText(mContext, text, Toast.LENGTH_SHORT);
-            toast.show();
+            //toast.cancel();
+            //toast = Toast.makeText(mContext, text, Toast.LENGTH_SHORT);
+            //toast.show();
         }
         return true;
     }
