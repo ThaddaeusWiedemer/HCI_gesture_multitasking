@@ -186,27 +186,21 @@ public class MyConstraintLayout extends ConstraintLayout {
     // event
     @Override
     public boolean onInterceptTouchEvent(MotionEvent event){
-        text = "";
-        mSwipeGestureDetector.onTouchEvent(event);
+        boolean intercept = mSwipeGestureDetector.isMyEvent(event);
         mPinchGestureDetector.onTouchEvent(event);
-        if(text != "") {
-            toast.cancel();
-            toast = Toast.makeText(mContext, text, Toast.LENGTH_SHORT);
-            toast.show();
-        }
-        return false;
+        return intercept;
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event){
-        text = "";
-        mSwipeGestureDetector.onTouchEvent(event);
-        mPinchGestureDetector.onTouchEvent(event);
-        if(text != "") {
-            toast.cancel();
-            toast = Toast.makeText(mContext, text, Toast.LENGTH_SHORT);
-            toast.show();
-        }
+          text = "";
+          mSwipeGestureDetector.onTouchEvent(event);
+          mPinchGestureDetector.onTouchEvent(event);
+          if(text != "") {
+              toast.cancel();
+              toast = Toast.makeText(mContext, text, Toast.LENGTH_SHORT);
+              toast.show();
+          }
         return true;
     }
 
@@ -239,7 +233,29 @@ public class MyConstraintLayout extends ConstraintLayout {
             //          right -> 2
             //          top   -> -1
             //          bottom ->  -2
-            switch((mOrientation ? -1 : 1) * detector.getType() * (getChildCount() > 1 ? 1 : 0)){
+            // don't handle if this element doesn't have children
+            if(getChildCount() <= 1){
+                return false;
+            }
+
+            // don't handle, if this child has children
+            if(mOrientation == ORIENT_H){
+                if(detector.getEdge() == SwipeGestureDetector.EDGE_TOP && mStart.getChildCount() > 1){
+                    return false;
+                }
+                if(detector.getEdge() == SwipeGestureDetector.EDGE_BOTTOM && mEnd.getChildCount() > 1){
+                    return false;
+                }
+            }else{
+                if(detector.getEdge() == SwipeGestureDetector.EDGE_LEFT && mStart.getChildCount() > 1){
+                    return false;
+                }
+                if(detector.getEdge() == SwipeGestureDetector.EDGE_RIGHT && mEnd.getChildCount() > 1){
+                    return false;
+                }
+            }
+
+            switch((mOrientation ? -1 : 1) * detector.getEdge() * (getChildCount() > 1 ? 1 : 0)){
                 case 1:
                     delete(START);
                     break;
@@ -253,6 +269,11 @@ public class MyConstraintLayout extends ConstraintLayout {
                     "Start " + detector.getInitialFocus().x + " " + detector.getInitialFocus().y + "\n" +
                     "Delta " + detector.getFocusX() + " " + detector.getFocusY();
             return true;
+        }
+
+        public boolean isMyInSwipe(SwipeGestureDetector detector){
+            // only handle the gesture if this is the innermost element
+            return getChildCount() <= 1;
         }
 
         public boolean onInSwipe(SwipeGestureDetector detector) {
