@@ -1,6 +1,7 @@
 package com.gesturemultitasking;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.util.AttributeSet;
 import android.view.View;
@@ -8,15 +9,16 @@ import android.view.ViewGroup;
 import android.widget.GridLayout;
 import android.widget.ScrollView;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class AppDrawer extends ScrollView {
     private GridLayout mGridLayout;
     private final int MINAPPWIDTH = 300;
-    private final int SUBVIEWCOUNT = 24;
+    private final int APPCOUNT = 28;
     private int columnCount;
-    private int mWidth;
-    private int mHeight;
+    private List mApps = new ArrayList();
 
     public AppDrawer(Context context) {
         this(context, null);
@@ -51,35 +53,49 @@ public class AppDrawer extends ScrollView {
 
         // add dummy apps
         Random rnd = new Random();
-        for (int i = 0; i < SUBVIEWCOUNT; i++) {
+        for (int i = 0; i < APPCOUNT; i++) {
+            // set color
             int color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
             View v = new View(getContext());
             v.setBackgroundColor(color);
-            addApp(v, i);
+
+            // set OnClickListener
+            v.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ViewGroup parent = (ViewGroup) getParent();
+                    mGridLayout.removeView(v);
+                    LayoutParams params = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+                    parent.addView(v, params);
+                    parent.removeViewAt(0);
+                    v.setOnClickListener(null);
+                }
+            });
+
+            // add to list
+            mApps.add(v);
+        }
+
+        draw();
+    }
+
+    public void draw() {
+        for(int i = 0; i < APPCOUNT; i++) {
+            // Layout parameters
+            GridLayout.LayoutParams params = new GridLayout.LayoutParams();
+            params.width = MINAPPWIDTH;
+            params.height = MINAPPWIDTH * 3 / 2;
+            params.columnSpec = GridLayout.spec(i % columnCount, 1.f);
+            // add views
+            mGridLayout.addView((View) mApps.get(i), params);
         }
     }
 
-    public void addApp(View view, int position) {
-        // Layout parameters
-        GridLayout.LayoutParams params = new GridLayout.LayoutParams();
-        params.width = MINAPPWIDTH;
-        params.height = MINAPPWIDTH * 3 / 2;
-        params.columnSpec = GridLayout.spec(position % columnCount, 1.f);
-
-        // OnClickListener
-        view.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ViewGroup parent = (ViewGroup) getParent();
-                mGridLayout.removeView(v);
-                LayoutParams params = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-                parent.addView(v, params);
-                parent.removeViewAt(0);
-                v.setOnClickListener(null);
-                }
-        });
-
-        mGridLayout.addView(view, params);
+    public void update(int newWidth){
+        columnCount = newWidth / MINAPPWIDTH - 1;
+        mGridLayout.removeAllViews();
+        mGridLayout.setColumnCount(columnCount);
+        draw();
     }
 
     /**

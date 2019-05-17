@@ -97,16 +97,28 @@ public class AppContainer extends ConstraintLayout {
         if(mOrientation){ // horizontal
             appDrawer = new AppDrawer(getContext(), getMeasuredWidth());
         }else{ // vertical
-            appDrawer = new AppDrawer(getContext(), getMeasuredWidth() / 2);
+            appDrawer = new AppDrawer(getContext(), (getMeasuredWidth() - AppContainer.DIVIDER_SIZE)/2);
         }
 
         // add content on both sides
         if(side){ // new content on start side
-            mStart.addView(appDrawer, params);
             mEnd.addView(content);
+            mStart.addView(appDrawer, params);
+            // update end side
+            if(mOrientation){ // horizontal
+                mEnd.update(getMeasuredWidth());
+            }else{ // vertical
+                mEnd.update((getMeasuredWidth() - AppContainer.DIVIDER_SIZE)/2);
+            }
         }else{ // new content on end side
             mStart.addView(content);
             mEnd.addView(appDrawer, params);
+            // update start side
+            if(mOrientation){ // horizontal
+                mStart.update(getMeasuredWidth());
+            }else{ // vertical
+                mStart.update((getMeasuredWidth() - AppContainer.DIVIDER_SIZE)/2);
+            }
         }
 
         ColorBlocksActivity.nWindows++;
@@ -192,7 +204,8 @@ public class AppContainer extends ConstraintLayout {
             mStart = null;
             mEnd = null;
         }
-        // update window count
+        // update content and window count
+        update(getMeasuredWidth());
         ColorBlocksActivity.nWindows--;
     }
 
@@ -209,6 +222,14 @@ public class AppContainer extends ConstraintLayout {
         constraintSet.applyTo(this);
     }
 
+    public void update(int newWidth){
+        // case: one child that is an AppDrawer
+        if(getChildCount() == 1 && getChildAt(0) instanceof AppDrawer){
+            AppDrawer appDrawer = (AppDrawer) getChildAt(0);
+            appDrawer.update(newWidth);
+        }
+    }
+
     // function gets called in parent before child and lets the parent take possession of a motion
     // event
     @Override
@@ -220,14 +241,14 @@ public class AppContainer extends ConstraintLayout {
 
     @Override
     public boolean onTouchEvent(MotionEvent event){
-          text = "";
-          mSwipeGestureDetector.onTouchEvent(event);
-          mPinchGestureDetector.onTouchEvent(event);
-          if(!text.equals("")) {
-              toast.cancel();
-              toast = Toast.makeText(getContext(), text, Toast.LENGTH_SHORT);
-              toast.show();
-          }
+        text = "";
+        mSwipeGestureDetector.onTouchEvent(event);
+        mPinchGestureDetector.onTouchEvent(event);
+        if(!text.equals("")) {
+            toast.cancel();
+            toast = Toast.makeText(getContext(), text, Toast.LENGTH_SHORT);
+            toast.show();
+        }
         return true;
     }
 
