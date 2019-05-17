@@ -14,9 +14,7 @@ import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.Window;
-import android.view.WindowManager;
 import android.widget.FrameLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 public class DragDrop extends AppCompatActivity {
@@ -123,21 +121,21 @@ public class DragDrop extends AppCompatActivity {
         public boolean onSwipe(SwipeGestureDetector detector) {
             text = "Swipe\n" +
                     "Start " + detector.getInitialFocus().x + " " + detector.getInitialFocus().y + "\n" +
-                    "Delta " + detector.getFocusX() + " " + detector.getFocusY();
+                    "Delta " + detector.getTotalFocusDeltaX() + " " + detector.getTotalFocusDeltaY();
             return true;
         }
 
         public boolean onOutSwipe(SwipeGestureDetector detector) {
             text = "OutSwipe\n" +
                     "Start " + detector.getInitialFocus().x + " " + detector.getInitialFocus().y + "\n" +
-                    "Delta " + detector.getFocusX() + " " + detector.getFocusY();
+                    "Delta " + detector.getTotalFocusDeltaX() + " " + detector.getTotalFocusDeltaY();
             return true;
         }
 
         public boolean onInSwipe(SwipeGestureDetector detector) {
             text = "InSwipe\n" +
                     "Start " + detector.getInitialFocus().x + " " + detector.getInitialFocus().y + "\n" +
-                    "Delta " + detector.getFocusX() + " " + detector.getFocusY();
+                    "Delta " + detector.getTotalFocusDeltaX() + " " + detector.getTotalFocusDeltaY();
             return true;
         }
     }

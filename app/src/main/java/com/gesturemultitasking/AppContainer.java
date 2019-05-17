@@ -3,6 +3,7 @@ package com.gesturemultitasking;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.PointF;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
 import android.util.AttributeSet;
@@ -29,12 +30,15 @@ public class AppContainer extends ConstraintLayout {
     public final static boolean END = false;
     public final static boolean START = true;
     public final static int DIVIDER_SIZE = 4;
-
+    
+    public final static int WIDTH = 2160;
+    public final static int HEIGHT = 1920;
+    public final static int DELETE_THRESHOLD = 250;
 
     // gesture handling
     private ScaleGestureDetector mPinchGestureDetector;
     private SwipeGestureDetector mSwipeGestureDetector;
-    private String text = "";
+    private String debugText = "";
     private Toast toast;
     public int mColor = android.R.color.white;
 
@@ -63,7 +67,7 @@ public class AppContainer extends ConstraintLayout {
 
         // initialize gesture detectors
         mPinchGestureDetector = new ScaleGestureDetector(context, new PinchListener());
-        mSwipeGestureDetector = new SwipeGestureDetector(context, new SwipeListener(), 50, 400, 2160, 1920);
+        mSwipeGestureDetector = new SwipeGestureDetector(context, new SwipeListener(), 50, 400, WIDTH, HEIGHT);
 
         // debug toasts
         toast = new Toast(context);
@@ -209,17 +213,38 @@ public class AppContainer extends ConstraintLayout {
         ColorBlocksActivity.nWindows--;
     }
 
-    private void moveSplit(int to){
+    private void moveSplit(PointF delta){
         ConstraintSet constraintSet = new ConstraintSet();
         constraintSet.clone(this);
 
-        int anchor = LayoutParams.START;
-        if (mOrientation == ORIENT_H) {
-            anchor = LayoutParams.TOP;
-        }
+        int[] dividerLocation = new int[2];
+        mDivider.getLocationOnScreen(dividerLocation); // gets top left corner
 
-        constraintSet.setMargin(mDivider.getId(),anchor, to);
-        constraintSet.applyTo(this);
+        if (mOrientation) { // horizontal
+            int y = (int) (dividerLocation[1] + delta.y);
+            constraintSet.setMargin(mDivider.getId(), LayoutParams.TOP, y);
+            if(y < DELETE_THRESHOLD){
+                keepOnly(mEnd);
+            } else if(y > HEIGHT - DELETE_THRESHOLD){
+                keepOnly(mStart);
+            } else {
+                mStart.update(dividerLocation[0]);
+                mEnd.update(HEIGHT - dividerLocation[0] - DIVIDER_SIZE);
+                constraintSet.applyTo(this);
+            }
+        }else{
+            int x = (int) (dividerLocation[0] + delta.x);
+            constraintSet.setMargin(mDivider.getId(), LayoutParams.START, x);
+            if(x < DELETE_THRESHOLD){
+                keepOnly(mEnd);
+            } else if(x > WIDTH - DELETE_THRESHOLD){
+                keepOnly(mStart);
+            } else {
+                mStart.update(x);
+                mEnd.update(WIDTH - x - DIVIDER_SIZE);
+                constraintSet.applyTo(this);
+            }
+        }
     }
 
     public void update(int newWidth){
@@ -241,12 +266,12 @@ public class AppContainer extends ConstraintLayout {
 
     @Override
     public boolean onTouchEvent(MotionEvent event){
-        text = "";
+        debugText = "";
         mSwipeGestureDetector.onTouchEvent(event);
         mPinchGestureDetector.onTouchEvent(event);
-        if(!text.equals("")) {
+        if(!debugText.equals("")) {
             toast.cancel();
-            toast = Toast.makeText(getContext(), text, Toast.LENGTH_SHORT);
+            toast = Toast.makeText(getContext(), debugText, Toast.LENGTH_SHORT);
             toast.show();
         }
         return true;
@@ -256,7 +281,7 @@ public class AppContainer extends ConstraintLayout {
     private class PinchListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
-            text = "Pinch\n" +
+            debugText = "Pinch\n" +
                     "Focus " + detector.getFocusX() + " " + detector.getFocusY() + "\n" +
                     "Span " + detector.getCurrentSpanX() + " " + detector.getCurrentSpanY();
             return true;
@@ -266,11 +291,45 @@ public class AppContainer extends ConstraintLayout {
     // handels swipe gestures
     private class SwipeListener extends SwipeGestureDetector.SimpleOnSwipeGestureListener {
         @Override
+        public boolean isMySwipe(SwipeGestureDetector detector){
+            // don't handle if there is no split
+            if(getChildCount() <= 1){
+                return false;
+            }
+
+            // only handle if fingers are on both sides of the divider
+            int[] dividerLocation = new int[2];
+            mDivider.getLocationOnScreen(dividerLocation); // gets top left corner
+            if(mOrientation){ // horizontal
+                int y_min = (int) (detector.getInitialFocus().y + detector.getTotalFocusDeltaY() - detector.getSpan().y);
+                int y_max = (int) (detector.getInitialFocus().y + detector.getTotalFocusDeltaY() + detector.getSpan().y);
+                int y = dividerLocation[1] + DIVIDER_SIZE / 2;
+                if( y_min < y && y_max > y){
+                    return true;
+                }
+            }else{ // vertical
+                int x_min = (int) (detector.getInitialFocus().x + detector.getTotalFocusDeltaX() - detector.getSpan().x);
+                int x_max = (int) (detector.getInitialFocus().x + detector.getTotalFocusDeltaX() + detector.getSpan().x);
+                int x = dividerLocation[0] + DIVIDER_SIZE / 2;
+                if( x_min < x && x_max > x){
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        @Override
         public boolean onSwipe(SwipeGestureDetector detector) {
+            // this check is necessary to cancel the swipe event in case the divide was deleted by
+            // moving it outside of the window
+            if(mDivider != null) {
+                moveSplit(detector.getFocusDelta());
+            }
             //debug toast
-            text = "Swipe\n" +
+            debugText = "Swipe (depth " + mDepth + ")\n" +
                     "Start " + detector.getInitialFocus().x + " " + detector.getInitialFocus().y + "\n" +
-                    "Delta " + detector.getFocusX() + " " + detector.getFocusY();
+                    "Delta " + detector.getTotalFocusDeltaX() + " " + detector.getTotalFocusDeltaY();
             return true;
         }
 
@@ -281,7 +340,7 @@ public class AppContainer extends ConstraintLayout {
                 return true;
             }
 
-            // don't handle at all, if this element doesn't have children
+            // don't handle if there is no split
             if(getChildCount() <= 1){
                 return false;
             }
@@ -319,7 +378,7 @@ public class AppContainer extends ConstraintLayout {
             // special case for depth 0
             if(mDepth == 0 && getChildCount() == 1 && !(getChildAt(0) instanceof AppDrawer)){
                 removeAllViews();
-                AppDrawer appDrawer = new AppDrawer(getContext(),2160);
+                AppDrawer appDrawer = new AppDrawer(getContext(),WIDTH);
                 FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
                 addView(appDrawer, params);
             }
@@ -334,9 +393,9 @@ public class AppContainer extends ConstraintLayout {
             }
 
             // debug toast
-            text = "OutSwipe " + detector.getEdge() + "\n" +
+            debugText = "OutSwipe " + detector.getEdge() + "\n" +
                     "Start " + detector.getInitialFocus().x + " " + detector.getInitialFocus().y + "\n" +
-                    "Delta " + detector.getFocusX() + " " + detector.getFocusY();
+                    "Delta " + detector.getTotalFocusDeltaX() + " " + detector.getTotalFocusDeltaY();
             return true;
         }
 
@@ -368,9 +427,9 @@ public class AppContainer extends ConstraintLayout {
             }
 
             // debug toast
-            text = "InSwipe " + detector.getEdge() + "\n" +
+            debugText = "InSwipe " + detector.getEdge() + "\n" +
                     "Start " + detector.getInitialFocus().x + " " + detector.getInitialFocus().y + "\n" +
-                    "Delta " + detector.getFocusX() + " " + detector.getFocusY();
+                    "Delta " + detector.getTotalFocusDeltaX() + " " + detector.getTotalFocusDeltaY();
             return true;
         }
     }

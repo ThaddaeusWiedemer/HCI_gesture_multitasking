@@ -86,21 +86,21 @@ public class MainActivity extends AppCompatActivity{
         public boolean onSwipe(SwipeGestureDetector detector) {
             name = "Swipe";
             position = "Start " + detector.getInitialFocus().x + " " + detector.getInitialFocus().y;
-            direction = "Delta " + detector.getFocusX() + " " + detector.getFocusY();
+            direction = "Delta " + detector.getTotalFocusDeltaX() + " " + detector.getTotalFocusDeltaY();
             return true;
         }
 
         public boolean onOutSwipe(SwipeGestureDetector detector) {
             name = "OutSwipe";
             position = "Start " + detector.getInitialFocus().x + " " + detector.getInitialFocus().y;
-            direction = "Delta " + detector.getFocusX() + " " + detector.getFocusY();
+            direction = "Delta " + detector.getTotalFocusDeltaX() + " " + detector.getTotalFocusDeltaY();
             return true;
         }
 
         public boolean onInSwipe(SwipeGestureDetector detector) {
             name = "InSwipe";
             position = "Start " + detector.getInitialFocus().x + " " + detector.getInitialFocus().y;
-            direction = "Delta " + detector.getFocusX() + " " + detector.getFocusY();
+            direction = "Delta " + detector.getTotalFocusDeltaX() + " " + detector.getTotalFocusDeltaY();
             return true;
         }
     }
