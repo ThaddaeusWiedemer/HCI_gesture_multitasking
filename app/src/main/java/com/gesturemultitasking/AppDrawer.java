@@ -1,7 +1,10 @@
 package com.gesturemultitasking;
 
+import android.animation.LayoutTransition;
 import android.content.Context;
 import android.graphics.Color;
+import android.support.constraint.ConstraintLayout;
+import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
@@ -59,8 +62,12 @@ public class AppDrawer extends ScrollView {
                 @Override
                 public void onClick(View v) {
                     ViewGroup parent = (ViewGroup) getParent();
+
                     mGridLayout.removeView(v);
                     LayoutParams params = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+                    ViewGroup.LayoutParams p = new ViewPager.LayoutParams();
+                    parent.setLayoutTransition(new LayoutTransition());
+
                     parent.addView(v, params);
                     parent.removeViewAt(0);
 
