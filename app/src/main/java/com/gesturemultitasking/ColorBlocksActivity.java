@@ -1,6 +1,5 @@
 package com.gesturemultitasking;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -8,12 +7,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.FrameLayout;
-import android.widget.Toast;
 
 public class ColorBlocksActivity extends AppCompatActivity {
     public static int nWindows;
-    private String text = "";
-    private Toast toast;
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -38,10 +34,6 @@ public class ColorBlocksActivity extends AppCompatActivity {
         AppDrawer appDrawer = new AppDrawer(this,2160);
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         first.addView(appDrawer, params);
-
-        // debug toasts
-        Context context = getApplicationContext();
-        toast = new Toast(context);
     }
 
     @Override

@@ -288,7 +288,7 @@ public class AppContainer extends ConstraintLayout {
         }
     }
 
-    // handels swipe gestures
+    // handles swipe gestures
     private class SwipeListener extends SwipeGestureDetector.SimpleOnSwipeGestureListener {
         @Override
         public boolean isMySwipe(SwipeGestureDetector detector){

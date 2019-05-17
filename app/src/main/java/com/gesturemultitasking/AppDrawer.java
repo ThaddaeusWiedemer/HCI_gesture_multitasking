@@ -1,7 +1,6 @@
 package com.gesturemultitasking;
 
 import android.content.Context;
-import android.content.res.Configuration;
 import android.graphics.Color;
 import android.util.AttributeSet;
 import android.view.View;
@@ -98,11 +97,6 @@ public class AppDrawer extends ScrollView {
         draw();
     }
 
-    /**
-     * used to set the number of columns dynamically.
-     * @param widthMeasureSpec
-     * @param heightMeasureSpec
-     */
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);

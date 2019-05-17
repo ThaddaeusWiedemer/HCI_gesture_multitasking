@@ -6,8 +6,6 @@ import android.view.MotionEvent;
 
 import com.almeros.android.multitouch.BaseGestureDetector;
 
-import java.util.List;
-
 public class SwipeGestureDetector extends BaseGestureDetector {
 
     /**
@@ -84,7 +82,7 @@ public class SwipeGestureDetector extends BaseGestureDetector {
     private PointF mInitFocus = new PointF();
     private PointF mFocusExternal = new PointF();
     private PointF mFocusDeltaExternal = new PointF();
-    private PointF mSpan = new PointF();;
+    private PointF mSpan = new PointF();
 
     // type of gesture
     private int mType;
@@ -94,11 +92,11 @@ public class SwipeGestureDetector extends BaseGestureDetector {
 
     // type for in- and out-swipes
     private int mEdge;
-    static final int EDGE_LEFT = 1;
-    static final int EDGE_RIGHT = 2;
+    private static final int EDGE_LEFT = 1;
+    private static final int EDGE_RIGHT = 2;
     private static final int EDGE_NONE = 0;
-    static final int EDGE_TOP = -1;
-    static final int EDGE_BOTTOM = -2;
+    private static final int EDGE_TOP = -1;
+    private static final int EDGE_BOTTOM = -2;
 
     // edge-swipe thresholds
     private int thresh_in;
@@ -402,7 +400,7 @@ public class SwipeGestureDetector extends BaseGestureDetector {
         return mFocusExternal.y;
     }
 
-    public PointF getFocusDelta() {
+    PointF getFocusDelta() {
         return mFocusDeltaExternal;
     }
 
@@ -410,7 +408,7 @@ public class SwipeGestureDetector extends BaseGestureDetector {
         return mInitFocus;
     }
 
-    public PointF getSpan() {
+    PointF getSpan() {
         return mSpan;
     }
 }
