@@ -9,12 +9,11 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 
-import java.util.Random;
-
 public class AppContainer extends ConstraintLayout {
-    private boolean divided;
     public int mDepth;
     public boolean mOrientation;
     public View mDivider;
@@ -37,7 +36,6 @@ public class AppContainer extends ConstraintLayout {
     private SwipeGestureDetector mSwipeGestureDetector;
     private String text = "";
     private Toast toast;
-    private Context mContext;
     public int mColor = android.R.color.white;
 
     public AppContainer(Context context){
@@ -60,7 +58,6 @@ public class AppContainer extends ConstraintLayout {
     public AppContainer(Context context, AttributeSet attrs, int defStyleAttr, int depth, boolean orientation){
         super(context, attrs, defStyleAttr);
 
-        //divided = false;
         mDepth = depth;
         mOrientation = orientation;
 
@@ -69,7 +66,6 @@ public class AppContainer extends ConstraintLayout {
         mSwipeGestureDetector = new SwipeGestureDetector(context, new SwipeListener(), 50, 400, 2160, 1920);
 
         // debug toasts
-        mContext = context;
         toast = new Toast(context);
 
         this.setBackgroundColor(mColor);
@@ -77,90 +73,46 @@ public class AppContainer extends ConstraintLayout {
 
     @SuppressLint("ResourceAsColor")
     public void add(boolean side){
+        // only three windows can be active
         if(ColorBlocksActivity.nWindows >= 3) {
             return;
         }
 
-        ConstraintSet constraintSet = new ConstraintSet();
+        // remove the current content
+        View content = getChildAt(0);
+        removeView(content);
 
-        // add the divider, set distance from top/left
-        mDivider = new View(mContext);
+        // create the split
+        mDivider = new View(getContext());
         mDivider.setId(View.generateViewId());
-        addView(mDivider);
-        if (mOrientation){
-            // horizontal
-            constraintSet.connect(mDivider.getId(), ConstraintSet.START, getId(), ConstraintSet.START);
-            constraintSet.connect(mDivider.getId(), ConstraintSet.END, getId(), ConstraintSet.END);
-            constraintSet.connect(mDivider.getId(), ConstraintSet.TOP, getId(), ConstraintSet.TOP,(getMeasuredHeight() - AppContainer.DIVIDER_SIZE)/2);
-        }else{
-            // vertical
-            constraintSet.connect(mDivider.getId(), ConstraintSet.TOP, getId(), ConstraintSet.TOP);
-            constraintSet.connect(mDivider.getId(), ConstraintSet.BOTTOM, getId(), ConstraintSet.BOTTOM);
-            constraintSet.connect(mDivider.getId(), ConstraintSet.START, getId(), ConstraintSet.START,(getMeasuredWidth() - AppContainer.DIVIDER_SIZE)/2);
-        }
-        //divided = true;
-
-        // add the two ConstraintLayouts on both sides of the divider
-        mStart = new AppContainer(mContext, mDepth + 1, !mOrientation);
+        mStart = new AppContainer(getContext(), mDepth + 1, !mOrientation);
         mStart.setId(View.generateViewId());
-        addView(mStart);
-        mEnd = new AppContainer(mContext, mDepth + 1, !mOrientation);
+        mEnd = new AppContainer(getContext(), mDepth + 1, !mOrientation);
         mEnd.setId(View.generateViewId());
-        addView(mEnd);
-        if (mOrientation){
-            constraintSet.connect(mStart.getId(), ConstraintSet.START, getId(), ConstraintSet.START);
-            constraintSet.connect(mStart.getId(), ConstraintSet.END, getId(), ConstraintSet.END);
-            constraintSet.connect(mStart.getId(), ConstraintSet.TOP, getId(), ConstraintSet.TOP);
-            constraintSet.connect(mStart.getId(), ConstraintSet.BOTTOM, mDivider.getId(), ConstraintSet.TOP);
-            constraintSet.connect(mEnd.getId(), ConstraintSet.START, getId(), ConstraintSet.START);
-            constraintSet.connect(mEnd.getId(), ConstraintSet.END, getId(), ConstraintSet.END);
-            constraintSet.connect(mEnd.getId(), ConstraintSet.TOP, mDivider.getId(), ConstraintSet.BOTTOM);
-            constraintSet.connect(mEnd.getId(), ConstraintSet.BOTTOM, getId(), ConstraintSet.BOTTOM);
-        }else{
-            constraintSet.connect(mStart.getId(), ConstraintSet.START, getId(), ConstraintSet.START);
-            constraintSet.connect(mStart.getId(), ConstraintSet.END, mDivider.getId(), ConstraintSet.START);
-            constraintSet.connect(mStart.getId(), ConstraintSet.TOP, getId(), ConstraintSet.TOP);
-            constraintSet.connect(mStart.getId(), ConstraintSet.BOTTOM, getId(), ConstraintSet.BOTTOM);
-            constraintSet.connect(mEnd.getId(), ConstraintSet.START, mDivider.getId(), ConstraintSet.END);
-            constraintSet.connect(mEnd.getId(), ConstraintSet.END, getId(), ConstraintSet.END);
-            constraintSet.connect(mEnd.getId(), ConstraintSet.TOP, getId(), ConstraintSet.TOP);
-            constraintSet.connect(mEnd.getId(), ConstraintSet.BOTTOM, getId(), ConstraintSet.BOTTOM);
+        split(mDivider, mStart, mEnd);
+
+        // create appDrawer
+        AppDrawer appDrawer;
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        if(mOrientation){ // horizontal
+            appDrawer = new AppDrawer(getContext(), getMeasuredWidth());
+        }else{ // vertical
+            appDrawer = new AppDrawer(getContext(), getMeasuredWidth() / 2);
         }
 
-        // apply constraintSet
-        constraintSet.applyTo(this);
-
-        // draw divider correctly
-        if(mOrientation){
-            mDivider.getLayoutParams().height = DIVIDER_SIZE;
-        }else{
-            mDivider.getLayoutParams().width = DIVIDER_SIZE;
+        // add content on both sides
+        if(side){ // new content on start side
+            mStart.addView(appDrawer, params);
+            mEnd.addView(content);
+        }else{ // new content on end side
+            mStart.addView(content);
+            mEnd.addView(appDrawer, params);
         }
-        mDivider.setBackgroundColor(Color.argb(255, 0, 0, 0));
 
-        // handle content
-        Random rnd = new Random();
-        int color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
-        AppDrawer appDrawer = new AppDrawer(getContext());
-        if(side){
-            // new content on start side
-            mStart.mColor = color;
-            mStart.setBackgroundColor(mStart.mColor);
-            mEnd.mColor = mColor;
-            mEnd.setBackgroundColor(mEnd.mColor);
-            mStart.addView(appDrawer);
-        }else{
-            // new content on end side
-            mStart.mColor = mColor;
-            mStart.setBackgroundColor(mStart.mColor);
-            mEnd.mColor = color;
-            mEnd.setBackgroundColor(mEnd.mColor);
-            mEnd.addView(appDrawer);
-        }
         ColorBlocksActivity.nWindows++;
     }
 
-    public void add(View divider, AppContainer start, AppContainer end){
+    public void split(View divider, AppContainer start, AppContainer end){
         ConstraintSet constraintSet = new ConstraintSet();
 
         // add the divider, set distance from top/left
@@ -177,7 +129,6 @@ public class AppContainer extends ConstraintLayout {
             constraintSet.connect(mDivider.getId(), ConstraintSet.BOTTOM, getId(), ConstraintSet.BOTTOM);
             constraintSet.connect(mDivider.getId(), ConstraintSet.START, getId(), ConstraintSet.START,(getMeasuredWidth() - AppContainer.DIVIDER_SIZE)/2);
         }
-        //divided = true;
 
         // add the two ConstraintLayouts on both sides of the divider
         mStart = start;
@@ -217,61 +168,31 @@ public class AppContainer extends ConstraintLayout {
     }
 
     @SuppressLint("ResourceAsColor")
-    public void delete(boolean side){
-        //remove correct child
-        View divider;
-        AppContainer start, end;
-        if (side == START){
-            // take content from End child
-            mColor = mEnd.mColor;
-            if(mEnd.getChildCount() > 1) {
-                divider = mEnd.getChildAt(0);
-                start = (AppContainer)mEnd.getChildAt(1);
-                end = (AppContainer)mEnd.getChildAt(2);
-                mEnd.removeAllViews();
-                removeView(mStart);
-                removeView(mEnd);
-                removeView(mDivider);
-                mOrientation = !mOrientation;
-                start.mDepth--;
-                end.mDepth--;
-                add(divider, start, end);
-            }else {
-                removeView(mStart);
-                removeView(mEnd);
-                removeView(mDivider);
-                mDivider = null;
-                mStart = null;
-                mEnd = null;
-                //divided = false;
-            }
-        } else {
-            // take content from Start child
-            mColor = mStart.mColor;
-            if(mStart.getChildCount() > 1) {
-                divider = mStart.getChildAt(0);
-                start = (AppContainer)mStart.getChildAt(1);
-                end = (AppContainer)mStart.getChildAt(2);
-                mStart.removeAllViews();
-                removeView(mStart);
-                removeView(mEnd);
-                removeView(mDivider);
-                mOrientation = !mOrientation;
-                start.mDepth--;
-                end.mDepth--;
-                add(divider, start, end);
-            }else {
-                removeView(mStart);
-                removeView(mEnd);
-                removeView(mDivider);
-                mDivider = null;
-                mStart = null;
-                mEnd = null;
-                //divided = false;
-            }
+    public void keepOnly(AppContainer keepSide){
+        if(keepSide.getChildCount() > 1) { // end side is split
+            // get all children
+            View divider = keepSide.getChildAt(0);
+            AppContainer start = (AppContainer)keepSide.getChildAt(1);
+            AppContainer end = (AppContainer)keepSide.getChildAt(2);
+            keepSide.removeAllViews();
+            removeAllViews();
+            // recreate split
+            mOrientation = !mOrientation;
+            split(divider, start, end);
+            mStart.mDepth--;
+            mEnd.mDepth--;
+        } else { // end side has normal content
+            // copy content over
+            View content = keepSide.getChildAt(0);
+            keepSide.removeAllViews();
+            removeAllViews();
+            addView(content);
+            // reset split
+            mDivider = null;
+            mStart = null;
+            mEnd = null;
         }
-        // update content
-        setBackgroundColor(mColor);
+        // update window count
         ColorBlocksActivity.nWindows--;
     }
 
@@ -304,7 +225,7 @@ public class AppContainer extends ConstraintLayout {
           mPinchGestureDetector.onTouchEvent(event);
           if(!text.equals("")) {
               toast.cancel();
-              toast = Toast.makeText(mContext, text, Toast.LENGTH_SHORT);
+              toast = Toast.makeText(getContext(), text, Toast.LENGTH_SHORT);
               toast.show();
           }
         return true;
@@ -381,10 +302,10 @@ public class AppContainer extends ConstraintLayout {
             //          bottom ->  -2
             switch((mOrientation ? -1 : 1) * detector.getEdge() * (getChildCount() > 1 ? 1 : 0)){
                 case 1:
-                    delete(START);
+                    keepOnly(mEnd);
                     break;
                 case 2:
-                    delete(END);
+                    keepOnly(mStart);
                     break;
             }
 
