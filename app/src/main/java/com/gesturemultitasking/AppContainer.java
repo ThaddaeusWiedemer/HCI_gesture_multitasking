@@ -276,6 +276,11 @@ public class AppContainer extends ConstraintLayout {
 
         @Override
         public boolean isMyOutSwipe(SwipeGestureDetector detector) {
+            // at depth 0, handle if there is no split
+            if(mDepth == 0 && getChildCount() == 1){
+                return true;
+            }
+
             // don't handle at all, if this element doesn't have children
             if(getChildCount() <= 1){
                 return false;
@@ -311,6 +316,14 @@ public class AppContainer extends ConstraintLayout {
             //          right   2
             //          top    -1
             //          bottom -2
+            // special case for depth 0
+            if(mDepth == 0 && getChildCount() == 1 && !(getChildAt(0) instanceof AppDrawer)){
+                removeAllViews();
+                AppDrawer appDrawer = new AppDrawer(getContext(),2160);
+                FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+                addView(appDrawer, params);
+            }
+
             switch((mOrientation ? -1 : 1) * detector.getEdge() * (getChildCount() > 1 ? 1 : 0)){
                 case 1:
                     keepOnly(mEnd);
