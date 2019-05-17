@@ -1,21 +1,11 @@
 package com.gesturemultitasking;
 
-import android.content.ClipData;
-import android.content.ClipDescription;
 import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Point;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.Window;
-import android.view.WindowManager;
-import android.widget.FrameLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 public class ColorBlocksActivity extends AppCompatActivity {
@@ -42,7 +32,7 @@ public class ColorBlocksActivity extends AppCompatActivity {
         setContentView(R.layout.activity_color_blocks);
         nWindows = 1;
         ConstraintLayout root = findViewById(R.id.root);
-        MyConstraintLayout first = (MyConstraintLayout)root.getChildAt(0);
+        AppContainer first = (AppContainer)root.getChildAt(0);
 
 
         // debug toasts

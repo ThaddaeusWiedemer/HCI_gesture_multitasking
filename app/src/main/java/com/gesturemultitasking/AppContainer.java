@@ -13,12 +13,13 @@ import android.widget.Toast;
 
 import java.util.Random;
 
-public class MyConstraintLayout extends ConstraintLayout {
+public class AppContainer extends ConstraintLayout {
+    private boolean divided;
     public int mDepth;
     public boolean mOrientation;
     public View mDivider;
-    public MyConstraintLayout mStart;
-    public MyConstraintLayout mEnd;
+    public AppContainer mStart;
+    public AppContainer mEnd;
     /**          _____              ____
      * vertical |  |  | horizontal |____| start
      *          |__|__|            |____| end
@@ -39,26 +40,27 @@ public class MyConstraintLayout extends ConstraintLayout {
     private Context mContext;
     public int mColor = android.R.color.white;
 
-    public MyConstraintLayout(Context context){
+    public AppContainer(Context context){
         this(context, null, 0, 0, ORIENT_V);
     }
 
-    public MyConstraintLayout(Context context, AttributeSet attrs){
+    public AppContainer(Context context, AttributeSet attrs){
         this(context, attrs, 0, 0, ORIENT_V);
     }
 
-    public MyConstraintLayout(Context context, AttributeSet attrs, int defStyleAttr){
+    public AppContainer(Context context, AttributeSet attrs, int defStyleAttr){
         this(context, attrs, defStyleAttr, 0, ORIENT_V);
     }
 
-    public MyConstraintLayout(Context context, int depth, boolean orientation){
+    public AppContainer(Context context, int depth, boolean orientation){
         this(context, null, 0, depth, orientation);
     }
 
     @SuppressLint("ResourceAsColor")
-    public MyConstraintLayout(Context context, AttributeSet attrs, int defStyleAttr, int depth, boolean orientation){
+    public AppContainer(Context context, AttributeSet attrs, int defStyleAttr, int depth, boolean orientation){
         super(context, attrs, defStyleAttr);
 
+        //divided = false;
         mDepth = depth;
         mOrientation = orientation;
 
@@ -75,6 +77,10 @@ public class MyConstraintLayout extends ConstraintLayout {
 
     @SuppressLint("ResourceAsColor")
     public void add(boolean side){
+        if(ColorBlocksActivity.nWindows >= 3) {
+            return;
+        }
+
         ConstraintSet constraintSet = new ConstraintSet();
 
         // add the divider, set distance from top/left
@@ -85,19 +91,20 @@ public class MyConstraintLayout extends ConstraintLayout {
             // horizontal
             constraintSet.connect(mDivider.getId(), ConstraintSet.START, getId(), ConstraintSet.START);
             constraintSet.connect(mDivider.getId(), ConstraintSet.END, getId(), ConstraintSet.END);
-            constraintSet.connect(mDivider.getId(), ConstraintSet.TOP, getId(), ConstraintSet.TOP,(getMeasuredHeight() - MyConstraintLayout.DIVIDER_SIZE)/2);
+            constraintSet.connect(mDivider.getId(), ConstraintSet.TOP, getId(), ConstraintSet.TOP,(getMeasuredHeight() - AppContainer.DIVIDER_SIZE)/2);
         }else{
             // vertical
             constraintSet.connect(mDivider.getId(), ConstraintSet.TOP, getId(), ConstraintSet.TOP);
             constraintSet.connect(mDivider.getId(), ConstraintSet.BOTTOM, getId(), ConstraintSet.BOTTOM);
-            constraintSet.connect(mDivider.getId(), ConstraintSet.START, getId(), ConstraintSet.START,(getMeasuredWidth() - MyConstraintLayout.DIVIDER_SIZE)/2);
+            constraintSet.connect(mDivider.getId(), ConstraintSet.START, getId(), ConstraintSet.START,(getMeasuredWidth() - AppContainer.DIVIDER_SIZE)/2);
         }
+        //divided = true;
 
         // add the two ConstraintLayouts on both sides of the divider
-        mStart = new MyConstraintLayout(mContext, mDepth + 1, !mOrientation);
+        mStart = new AppContainer(mContext, mDepth + 1, !mOrientation);
         mStart.setId(View.generateViewId());
         addView(mStart);
-        mEnd = new MyConstraintLayout(mContext, mDepth + 1, !mOrientation);
+        mEnd = new AppContainer(mContext, mDepth + 1, !mOrientation);
         mEnd.setId(View.generateViewId());
         addView(mEnd);
         if (mOrientation){
@@ -147,26 +154,122 @@ public class MyConstraintLayout extends ConstraintLayout {
             mEnd.mColor = color;
             mEnd.setBackgroundColor(mEnd.mColor);
         }
+        ColorBlocksActivity.nWindows++;
     }
 
-    public void delete(boolean side){
+    public void add(View divider, AppContainer start, AppContainer end){
+        ConstraintSet constraintSet = new ConstraintSet();
 
-        //remove correct child
-        if (side == START){
-            removeView(mStart);
-            mStart = null;
-            // take content from End child
-            mColor = mEnd.mColor;
-        } else {
-            removeView(mEnd);
-            mEnd = null;
-            // take content from Start child
-            mColor = mStart.mColor;
+        // add the divider, set distance from top/left
+        mDivider = divider;
+        addView(mDivider);
+        if (mOrientation){
+            // horizontal
+            constraintSet.connect(mDivider.getId(), ConstraintSet.START, getId(), ConstraintSet.START);
+            constraintSet.connect(mDivider.getId(), ConstraintSet.END, getId(), ConstraintSet.END);
+            constraintSet.connect(mDivider.getId(), ConstraintSet.TOP, getId(), ConstraintSet.TOP,(getMeasuredHeight() - AppContainer.DIVIDER_SIZE)/2);
+        }else{
+            // vertical
+            constraintSet.connect(mDivider.getId(), ConstraintSet.TOP, getId(), ConstraintSet.TOP);
+            constraintSet.connect(mDivider.getId(), ConstraintSet.BOTTOM, getId(), ConstraintSet.BOTTOM);
+            constraintSet.connect(mDivider.getId(), ConstraintSet.START, getId(), ConstraintSet.START,(getMeasuredWidth() - AppContainer.DIVIDER_SIZE)/2);
+        }
+        //divided = true;
+
+        // add the two ConstraintLayouts on both sides of the divider
+        mStart = start;
+        addView(mStart);
+        mEnd = end;
+        addView(mEnd);
+        if (mOrientation){
+            constraintSet.connect(mStart.getId(), ConstraintSet.START, getId(), ConstraintSet.START);
+            constraintSet.connect(mStart.getId(), ConstraintSet.END, getId(), ConstraintSet.END);
+            constraintSet.connect(mStart.getId(), ConstraintSet.TOP, getId(), ConstraintSet.TOP);
+            constraintSet.connect(mStart.getId(), ConstraintSet.BOTTOM, mDivider.getId(), ConstraintSet.TOP);
+            constraintSet.connect(mEnd.getId(), ConstraintSet.START, getId(), ConstraintSet.START);
+            constraintSet.connect(mEnd.getId(), ConstraintSet.END, getId(), ConstraintSet.END);
+            constraintSet.connect(mEnd.getId(), ConstraintSet.TOP, mDivider.getId(), ConstraintSet.BOTTOM);
+            constraintSet.connect(mEnd.getId(), ConstraintSet.BOTTOM, getId(), ConstraintSet.BOTTOM);
+        }else{
+            constraintSet.connect(mStart.getId(), ConstraintSet.START, getId(), ConstraintSet.START);
+            constraintSet.connect(mStart.getId(), ConstraintSet.END, mDivider.getId(), ConstraintSet.START);
+            constraintSet.connect(mStart.getId(), ConstraintSet.TOP, getId(), ConstraintSet.TOP);
+            constraintSet.connect(mStart.getId(), ConstraintSet.BOTTOM, getId(), ConstraintSet.BOTTOM);
+            constraintSet.connect(mEnd.getId(), ConstraintSet.START, mDivider.getId(), ConstraintSet.END);
+            constraintSet.connect(mEnd.getId(), ConstraintSet.END, getId(), ConstraintSet.END);
+            constraintSet.connect(mEnd.getId(), ConstraintSet.TOP, getId(), ConstraintSet.TOP);
+            constraintSet.connect(mEnd.getId(), ConstraintSet.BOTTOM, getId(), ConstraintSet.BOTTOM);
         }
 
-        // remove divider from layout
-        removeView(mDivider);
-        mDivider = null;
+        // apply constraintSet
+        constraintSet.applyTo(this);
+
+        // draw divider correctly
+        if(mOrientation){
+            mDivider.getLayoutParams().height = DIVIDER_SIZE;
+        }else{
+            mDivider.getLayoutParams().width = DIVIDER_SIZE;
+        }
+        mDivider.setBackgroundColor(Color.argb(255, 0, 0, 0));
+    }
+
+    @SuppressLint("ResourceAsColor")
+    public void delete(boolean side){
+        //remove correct child
+        View divider;
+        AppContainer start, end;
+        if (side == START){
+            // take content from End child
+            mColor = mEnd.mColor;
+            if(mEnd.getChildCount() > 1) {
+                divider = mEnd.getChildAt(0);
+                start = (AppContainer)mEnd.getChildAt(1);
+                end = (AppContainer)mEnd.getChildAt(2);
+                mEnd.removeAllViews();
+                removeView(mStart);
+                removeView(mEnd);
+                removeView(mDivider);
+                mOrientation = !mOrientation;
+                start.mDepth--;
+                end.mDepth--;
+                add(divider, start, end);
+            }else {
+                removeView(mStart);
+                removeView(mEnd);
+                removeView(mDivider);
+                mDivider = null;
+                mStart = null;
+                mEnd = null;
+                //divided = false;
+            }
+        } else {
+            // take content from Start child
+            mColor = mStart.mColor;
+            if(mStart.getChildCount() > 1) {
+                divider = mStart.getChildAt(0);
+                start = (AppContainer)mStart.getChildAt(1);
+                end = (AppContainer)mStart.getChildAt(2);
+                mStart.removeAllViews();
+                removeView(mStart);
+                removeView(mEnd);
+                removeView(mDivider);
+                mOrientation = !mOrientation;
+                start.mDepth--;
+                end.mDepth--;
+                add(divider, start, end);
+            }else {
+                removeView(mStart);
+                removeView(mEnd);
+                removeView(mDivider);
+                mDivider = null;
+                mStart = null;
+                mEnd = null;
+                //divided = false;
+            }
+        }
+        // update content
+        setBackgroundColor(mColor);
+        ColorBlocksActivity.nWindows--;
     }
 
     private void moveSplit(int to){
@@ -196,7 +299,7 @@ public class MyConstraintLayout extends ConstraintLayout {
           text = "";
           mSwipeGestureDetector.onTouchEvent(event);
           mPinchGestureDetector.onTouchEvent(event);
-          if(text != "") {
+          if(!text.equals("")) {
               toast.cancel();
               toast = Toast.makeText(mContext, text, Toast.LENGTH_SHORT);
               toast.show();
@@ -226,24 +329,25 @@ public class MyConstraintLayout extends ConstraintLayout {
             return true;
         }
 
-        public boolean onOutSwipe(SwipeGestureDetector detector) {
-            // orientation: horizontal -> true
-            //              vertical -> false
-            //getTyoe : left -> 1
-            //          right -> 2
-            //          top   -> -1
-            //          bottom ->  -2
-            // don't handle if this element doesn't have children
+        @Override
+        public boolean isMyOutSwipe(SwipeGestureDetector detector) {
+            // don't handle at all, if this element doesn't have children
             if(getChildCount() <= 1){
                 return false;
             }
 
-            // don't handle, if this child has children
+            // if this element's child has children, let the child deal with it
             if(mOrientation == ORIENT_H){
                 if(detector.getEdge() == SwipeGestureDetector.EDGE_TOP && mStart.getChildCount() > 1){
                     return false;
                 }
                 if(detector.getEdge() == SwipeGestureDetector.EDGE_BOTTOM && mEnd.getChildCount() > 1){
+                    return false;
+                }
+                if(detector.getEdge() == SwipeGestureDetector.EDGE_RIGHT){
+                    return false;
+                }
+                if(detector.getEdge() == SwipeGestureDetector.EDGE_LEFT){
                     return false;
                 }
             }else{
@@ -253,8 +357,25 @@ public class MyConstraintLayout extends ConstraintLayout {
                 if(detector.getEdge() == SwipeGestureDetector.EDGE_RIGHT && mEnd.getChildCount() > 1){
                     return false;
                 }
+                if(detector.getEdge() == SwipeGestureDetector.EDGE_TOP){
+                    return false;
+                }
+                if(detector.getEdge() == SwipeGestureDetector.EDGE_BOTTOM){
+                    return false;
+                }
             }
 
+            return true;
+        }
+
+        @Override
+        public boolean onOutSwipeBegin(SwipeGestureDetector detector) {
+            // orientation: horizontal -> true
+            //              vertical -> false
+            //getTyoe : left -> 1
+            //          right -> 2
+            //          top   -> -1
+            //          bottom ->  -2
             switch((mOrientation ? -1 : 1) * detector.getEdge() * (getChildCount() > 1 ? 1 : 0)){
                 case 1:
                     delete(START);
@@ -265,18 +386,20 @@ public class MyConstraintLayout extends ConstraintLayout {
             }
 
             // debug toast
-            text = "OutSwipe\n" +
+            text = "OutSwipe " + detector.getEdge() + "\n" +
                     "Start " + detector.getInitialFocus().x + " " + detector.getInitialFocus().y + "\n" +
                     "Delta " + detector.getFocusX() + " " + detector.getFocusY();
             return true;
         }
 
+        @Override
         public boolean isMyInSwipe(SwipeGestureDetector detector){
             // only handle the gesture if this is the innermost element
             return getChildCount() <= 1;
         }
 
-        public boolean onInSwipe(SwipeGestureDetector detector) {
+        @Override
+        public boolean onInSwipeBegin(SwipeGestureDetector detector) {
             // set orientation for depth 0
             if(mDepth == 0){
                 if(detector.getEdge() > 0) {
