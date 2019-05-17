@@ -281,31 +281,21 @@ public class AppContainer extends ConstraintLayout {
                 return false;
             }
 
-            // if this element's child has children, let the child deal with it
-            if(mOrientation == ORIENT_H){
-                if(detector.getEdge() == SwipeGestureDetector.EDGE_TOP && mStart.getChildCount() > 1){
+            // orientation: horizontal true
+            //              vertical   false
+            // getEdge: left    1
+            //          right   2
+            //          top    -1
+            //          bottom -2
+            if((mOrientation ? -1 : 1) * detector.getEdge() < 0) {
+                // only accept swipes on the same edge that created a view
+                return false;
+            } else {
+                // if the child that is about to be deleted has children itself, let the child deal with it
+                if(Math.abs(detector.getEdge()) == 1 && mStart.getChildCount() > 1){
                     return false;
                 }
-                if(detector.getEdge() == SwipeGestureDetector.EDGE_BOTTOM && mEnd.getChildCount() > 1){
-                    return false;
-                }
-                if(detector.getEdge() == SwipeGestureDetector.EDGE_RIGHT){
-                    return false;
-                }
-                if(detector.getEdge() == SwipeGestureDetector.EDGE_LEFT){
-                    return false;
-                }
-            }else{
-                if(detector.getEdge() == SwipeGestureDetector.EDGE_LEFT && mStart.getChildCount() > 1){
-                    return false;
-                }
-                if(detector.getEdge() == SwipeGestureDetector.EDGE_RIGHT && mEnd.getChildCount() > 1){
-                    return false;
-                }
-                if(detector.getEdge() == SwipeGestureDetector.EDGE_TOP){
-                    return false;
-                }
-                if(detector.getEdge() == SwipeGestureDetector.EDGE_BOTTOM){
+                if(Math.abs(detector.getEdge()) == 2 && mEnd.getChildCount() > 1){
                     return false;
                 }
             }
@@ -315,12 +305,12 @@ public class AppContainer extends ConstraintLayout {
 
         @Override
         public boolean onOutSwipeBegin(SwipeGestureDetector detector) {
-            // orientation: horizontal -> true
-            //              vertical -> false
-            //getTyoe : left -> 1
-            //          right -> 2
-            //          top   -> -1
-            //          bottom ->  -2
+            // orientation: horizontal true
+            //              vertical   false
+            // getEdge: left    1
+            //          right   2
+            //          top    -1
+            //          bottom -2
             switch((mOrientation ? -1 : 1) * detector.getEdge() * (getChildCount() > 1 ? 1 : 0)){
                 case 1:
                     keepOnly(mEnd);
