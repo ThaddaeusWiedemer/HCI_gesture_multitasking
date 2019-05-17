@@ -14,8 +14,7 @@
 
         <com.gesturemultitasking.AppDrawer android:layout_height="match_parent"
             android:layout_width="match_parent"></com.gesturemultitasking.AppDrawer>
-
-    </com.gesturemultitasking.MyConstraintLayout>
+    </com.gesturemultitasking.AppContainer>
 
 </android.support.constraint.ConstraintLayout>
 

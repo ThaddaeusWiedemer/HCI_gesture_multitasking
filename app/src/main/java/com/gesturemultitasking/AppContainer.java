@@ -141,18 +141,21 @@ public class AppContainer extends ConstraintLayout {
         // handle content
         Random rnd = new Random();
         int color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
+        AppDrawer appDrawer = new AppDrawer(getContext());
         if(side){
             // new content on start side
             mStart.mColor = color;
             mStart.setBackgroundColor(mStart.mColor);
             mEnd.mColor = mColor;
             mEnd.setBackgroundColor(mEnd.mColor);
+            mStart.addView(appDrawer);
         }else{
             // new content on end side
             mStart.mColor = mColor;
             mStart.setBackgroundColor(mStart.mColor);
             mEnd.mColor = color;
             mEnd.setBackgroundColor(mEnd.mColor);
+            mEnd.addView(appDrawer);
         }
         ColorBlocksActivity.nWindows++;
     }
