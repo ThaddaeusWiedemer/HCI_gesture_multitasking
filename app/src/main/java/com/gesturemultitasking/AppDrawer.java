@@ -2,7 +2,6 @@ package com.gesturemultitasking;
 
 import android.animation.LayoutTransition;
 import android.content.Context;
-import android.content.res.Configuration;
 import android.graphics.Color;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.view.ViewPager;
@@ -20,7 +19,7 @@ import java.util.Random;
 
 public class AppDrawer extends ScrollView {
     private GridLayout mGridLayout;
-    private final int MINAPPWIDTH = 300;
+    private final int MINAPPWIDTH = 400;
     private final int APPCOUNT = 28;
     private int columnCount;
     private List mApps = new ArrayList();
@@ -44,7 +43,7 @@ public class AppDrawer extends ScrollView {
     public AppDrawer(Context context, AttributeSet attrs, int defStyleAttr, int width) {
         super(context, attrs, defStyleAttr);
         // determine how many cells can fit next to each other
-        columnCount = width / MINAPPWIDTH - 1;
+        columnCount = Math.max((width) / (MINAPPWIDTH + 10), 1);
         init();
     }
 
@@ -90,22 +89,17 @@ public class AppDrawer extends ScrollView {
     }
 
     public void update(int newWidth){
-        columnCount = newWidth / MINAPPWIDTH - 1;
+        columnCount = Math.max((newWidth) / (MINAPPWIDTH + 10), 1);
         mGridLayout.removeAllViews();
         mGridLayout.setColumnCount(columnCount);
         draw();
     }
 
-    /**
-     * used to set the number of columns dynamically.
-     * @param widthMeasureSpec
-     * @param heightMeasureSpec
-     */
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         int width = MeasureSpec.getSize(widthMeasureSpec);
-        int nColumns = width / (MINAPPWIDTH + 20);
+        int nColumns = Math.max((width) / (MINAPPWIDTH + 10), 1);
         mGridLayout.setColumnCount(nColumns);
     }
 

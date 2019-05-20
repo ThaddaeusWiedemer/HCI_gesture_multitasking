@@ -82,6 +82,7 @@ public class SwipeGestureDetector extends BaseGestureDetector {
     private PointF mInitFocus = new PointF();
     private PointF mFocusExternal = new PointF();
     private PointF mFocusDeltaExternal = new PointF();
+    private PointF mSpan = new PointF();
 
     // type of gesture
     private int mType;
@@ -91,11 +92,11 @@ public class SwipeGestureDetector extends BaseGestureDetector {
 
     // type for in- and out-swipes
     private int mEdge;
-    static final int EDGE_LEFT = 1;
-    static final int EDGE_RIGHT = 2;
+    private static final int EDGE_LEFT = 1;
+    private static final int EDGE_RIGHT = 2;
     private static final int EDGE_NONE = 0;
-    static final int EDGE_TOP = -1;
-    static final int EDGE_BOTTOM = -2;
+    private static final int EDGE_TOP = -1;
+    private static final int EDGE_BOTTOM = -2;
 
     // edge-swipe thresholds
     private int thresh_in;
@@ -159,7 +160,7 @@ public class SwipeGestureDetector extends BaseGestureDetector {
                 break;
 
             case MotionEvent.ACTION_MOVE:
-                if(event.getPointerCount() > 1) {
+                if(event.getPointerCount() == 2) {
                     updateStateByEvent(event);
                     determineSwipeType();
                     switch(mType){
@@ -203,7 +204,7 @@ public class SwipeGestureDetector extends BaseGestureDetector {
                 break;
 
             case MotionEvent.ACTION_MOVE:
-                if(event.getPointerCount() > 1) {
+                if(event.getPointerCount() == 2) {
                     updateStateByEvent(event);
                     determineSwipeType();
                     switch(mType){
@@ -236,7 +237,7 @@ public class SwipeGestureDetector extends BaseGestureDetector {
                 break;
 
             case MotionEvent.ACTION_MOVE:
-                if(event.getPointerCount() > 1) {
+                if(event.getPointerCount() == 1) {
                     updateStateByEvent(event);
 
                     // Only accept the event if our relative pressure is within
@@ -278,7 +279,7 @@ public class SwipeGestureDetector extends BaseGestureDetector {
                 break;
 
             case MotionEvent.ACTION_MOVE:
-                if(event.getPointerCount() > 1) {
+                if(event.getPointerCount() == 2) {
                     updateStateByEvent(event);
 
                     // Only accept the event if our relative pressure is within
@@ -370,6 +371,12 @@ public class SwipeGestureDetector extends BaseGestureDetector {
             x += e.getX(i);
             y += e.getY(i);
         }
+
+        if(pCount > 1){
+            mSpan.x = Math.abs(e.getX(0) - e.getX(1));
+            mSpan.y = Math.abs(e.getY(0) - e.getY(1));
+        }
+
         x /= pCount;
         y /= pCount;
 
@@ -385,19 +392,23 @@ public class SwipeGestureDetector extends BaseGestureDetector {
         return mEdge;
     }
 
-    float getFocusX() {
+    float getTotalFocusDeltaX() {
         return mFocusExternal.x;
     }
 
-    float getFocusY() {
+    float getTotalFocusDeltaY() {
         return mFocusExternal.y;
     }
 
-    public PointF getFocusDelta() {
+    PointF getFocusDelta() {
         return mFocusDeltaExternal;
     }
 
     PointF getInitialFocus() {
         return mInitFocus;
+    }
+
+    PointF getSpan() {
+        return mSpan;
     }
 }
