@@ -145,7 +145,6 @@ public class SwipeGestureDetector extends BaseGestureDetector {
             case MotionEvent.ACTION_DOWN:
                 resetState(); // In case we missed an UP/CANCEL event
 
-                mInitFocus = determineFocalPoint(event);
                 mFocusExternal = new PointF(0, 0);
                 mPrevEvent = MotionEvent.obtain(event);
                 mTimeDelta = 0;
@@ -157,6 +156,7 @@ public class SwipeGestureDetector extends BaseGestureDetector {
                 //updateStateByEvent(event);
                 mPrevEvent.recycle();
                 mPrevEvent = MotionEvent.obtain(event);
+                mInitFocus = determineFocalPoint(event);
                 break;
 
             case MotionEvent.ACTION_MOVE:
@@ -189,7 +189,6 @@ public class SwipeGestureDetector extends BaseGestureDetector {
             case MotionEvent.ACTION_DOWN:
                 resetState(); // In case we missed an UP/CANCEL event
 
-                mInitFocus = determineFocalPoint(event);
                 mFocusExternal = new PointF(0, 0);
                 mPrevEvent = MotionEvent.obtain(event);
                 mTimeDelta = 0;
@@ -201,6 +200,7 @@ public class SwipeGestureDetector extends BaseGestureDetector {
                 //updateStateByEvent(event);
                 mPrevEvent.recycle();
                 mPrevEvent = MotionEvent.obtain(event);
+                mInitFocus = determineFocalPoint(event);
                 break;
 
             case MotionEvent.ACTION_MOVE:

@@ -232,7 +232,7 @@ public class AppContainer extends ConstraintLayout {
             } else if(y > HEIGHT - DELETE_THRESHOLD){
                 keepOnly(mStart);
             } else {
-                //mStart.update(dividerLocation[0]);
+                //mStart.update(WIDTH);
                 //mEnd.update(HEIGHT - dividerLocation[0] - DIVIDER_SIZE);
                 constraintSet.applyTo(this);
             }
@@ -253,9 +253,16 @@ public class AppContainer extends ConstraintLayout {
 
     public void update(int newWidth){
         // case: one child that is an AppDrawer
-        if(getChildCount() == 1 && getChildAt(0) instanceof AppDrawer){
+        if(getChildCount() == 1 && getChildAt(0) instanceof AppDrawer) {
             AppDrawer appDrawer = (AppDrawer) getChildAt(0);
             appDrawer.update(newWidth);
+        }else if (mDivider != null){
+            if (mOrientation == ORIENT_H) {
+                mStart.update(newWidth);
+                mEnd.update(newWidth);
+            }
+
+
         }
     }
 
