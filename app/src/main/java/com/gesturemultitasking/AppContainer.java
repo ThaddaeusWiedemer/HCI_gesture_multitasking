@@ -266,6 +266,10 @@ public class AppContainer extends ConstraintLayout {
         }
     }
 
+    private boolean isMStart(){
+        return ((AppContainer)getParent()).mStart == this;
+    }
+
     // function gets called in parent before child and lets the parent take possession of a motion
     // event
     @Override
@@ -298,6 +302,7 @@ public class AppContainer extends ConstraintLayout {
             return true;
         }
     }
+
 
     // handles swipe gestures
     private class SwipeListener extends SwipeGestureDetector.SimpleOnSwipeGestureListener {
@@ -422,20 +427,80 @@ public class AppContainer extends ConstraintLayout {
             if(mDepth == 0){
                 if(detector.getEdge() > 0) {
                     mOrientation = ORIENT_V;
+                    if (detector.getEdge()==1){
+                        add(START);
+                    }else{
+                        add(END);
+                    }
                 }else{
                     mOrientation = ORIENT_H;
+                    if (detector.getEdge()==-1){
+                        add(START);
+                    }else{
+                        add(END);
+                    }
+                }
+            } else if (mDepth < 2) {
+                boolean isMStart = isMStart();
+                if (mOrientation == ORIENT_H) {
+                    if (detector.getEdge() == -1 ){ // top
+                        add(START);
+                    }else if (detector.getEdge() == -2){ // bottom
+                        add(END);
+                    }else if (isMStart) { // is left child
+                        if (detector.getEdge() == 1) {// left
+                            if (detector.getInitialFocus().y < HEIGHT / 2) { // upper left half
+                                add(START);
+                            } else { // lower left half
+                                add(END);
+                            }
+
+                        }
+                    }else { // is right child
+                        if (detector.getEdge() == 2) {// right
+                            if (detector.getInitialFocus().y < HEIGHT / 2) { // upper right half
+                                add(START);
+                            } else { // lower right half
+                                add(END);
+                            }
+
+                        }
+                    }
+
+                } else {
+                    if (detector.getEdge() == 1 ){ // left
+                        add(START);
+                    }else if (detector.getEdge() == 2){ // right
+                        add(END);
+                    }else if (isMStart) { // is top child
+                        if (detector.getEdge() == -1) {// top
+                            if (detector.getInitialFocus().x < WIDTH/ 2) { // top left half
+                                add(START);
+                            } else { // top right half
+                                add(END);
+                            }
+
+                        }
+                    }else { // is bottom child
+                        if (detector.getEdge() == -2) {// bottom
+                            if (detector.getInitialFocus().x < WIDTH/ 2) { // bottom left half
+                                add(START);
+                            } else { // bottom right half
+                                add(END);
+                            }
+
+                        }
+                    }
                 }
             }
-
-            // add new window on correct side
-            switch ((mOrientation ? -1 : 1) * detector.getEdge() * (mDepth < 2 ? 1 : 0)) {
-                case 1:
-                    add(START);
-                    break;
-                case 2:
-                    add(END);
-                    break;
-            }
+//            switch ((mOrientation ? -1 : 1) * detector.getEdge() * (mDepth < 2 ? 1 : 0)) {
+//                case 1:
+//                    add(START);
+//                    break;
+//                case 2:
+//                    add(END);
+//                    break;
+//            }
 
             // debug toast
             debugText = "InSwipe " + detector.getEdge() + "\n" +
