@@ -29,4 +29,5 @@ dependencies {
 
     // Two fingers gesture library
     implementation 'com.github.Almeros:android-gesture-detectors:v1.0'
+    implementation 'com.android.support:support-annotations:28.0.0'
 }

@@ -10,12 +10,7 @@
     <com.gesturemultitasking.AppContainer
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/first">
-
-
-        <com.gesturemultitasking.AppDrawer android:layout_height="match_parent"
-            android:layout_width="match_parent"></com.gesturemultitasking.AppDrawer>
-    </com.gesturemultitasking.AppContainer>
+        android:id="@+id/first"/>
 
 </android.support.constraint.ConstraintLayout>
 

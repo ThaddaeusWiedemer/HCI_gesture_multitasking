@@ -5,7 +5,9 @@ import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 
 public class ColorBlocksActivity extends AppCompatActivity {
@@ -33,7 +35,9 @@ public class ColorBlocksActivity extends AppCompatActivity {
         nWindows = 1;
         ConstraintLayout root = findViewById(R.id.root);
         AppContainer first = (AppContainer)root.getChildAt(0);
-
+        AppDrawer appDrawer = new AppDrawer(this,2160);
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        first.addView(appDrawer, params);
 
         // debug toasts
         Context context = getApplicationContext();
