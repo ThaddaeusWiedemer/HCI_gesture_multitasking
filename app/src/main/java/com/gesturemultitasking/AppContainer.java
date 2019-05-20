@@ -110,18 +110,22 @@ public class AppContainer extends ConstraintLayout {
             mStart.addView(appDrawer, params);
             // update end side
             if(mOrientation){ // horizontal
-                mEnd.update(getMeasuredWidth());
+                int w = getMeasuredWidth();
+                mEnd.update(w);
             }else{ // vertical
-                mEnd.update((getMeasuredWidth() - AppContainer.DIVIDER_SIZE)/2);
+                int w = getMeasuredWidth();
+                mEnd.update((w - AppContainer.DIVIDER_SIZE)/2);
             }
         }else{ // new content on end side
             mStart.addView(content);
             mEnd.addView(appDrawer, params);
             // update start side
             if(mOrientation){ // horizontal
-                mStart.update(getMeasuredWidth());
+                int w = getMeasuredWidth();
+                mStart.update(w);
             }else{ // vertical
-                mStart.update((getMeasuredWidth() - AppContainer.DIVIDER_SIZE)/2);
+                int w = getMeasuredWidth();
+                mStart.update((w - AppContainer.DIVIDER_SIZE)/2);
             }
         }
 
@@ -228,8 +232,8 @@ public class AppContainer extends ConstraintLayout {
             } else if(y > HEIGHT - DELETE_THRESHOLD){
                 keepOnly(mStart);
             } else {
-                mStart.update(dividerLocation[0]);
-                mEnd.update(HEIGHT - dividerLocation[0] - DIVIDER_SIZE);
+                //mStart.update(dividerLocation[0]);
+                //mEnd.update(HEIGHT - dividerLocation[0] - DIVIDER_SIZE);
                 constraintSet.applyTo(this);
             }
         }else{

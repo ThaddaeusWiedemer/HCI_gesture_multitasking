@@ -9,7 +9,11 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
+import android.widget.CalendarView;
+import android.widget.FrameLayout;
 import android.widget.GridLayout;
 import android.widget.ScrollView;
 
@@ -20,7 +24,7 @@ import java.util.Random;
 public class AppDrawer extends ScrollView {
     private GridLayout mGridLayout;
     private final int MINAPPWIDTH = 400;
-    private final int APPCOUNT = 28;
+    private int APPCOUNT= 28;
     private int columnCount;
     private List mApps = new ArrayList();
 
@@ -57,23 +61,43 @@ public class AppDrawer extends ScrollView {
 
         // add dummy apps
         Random rnd = new Random();
-        for (int i = 0; i < APPCOUNT; i++) {
 
+        WebView web1 = makeWebClient("https://www.shine.cn");
+        mApps.add(web1);
+
+        WebView web2 = makeWebClient("http://m.xinhuanet.com/");
+        mApps.add(web2);
+
+        WebView web3 = makeWebClient("http://www.taiwan.cn/m/");
+        mApps.add(web3);
+
+        WebView web4 = makeWebClient("http://wap.chengdu.cn/");
+        mApps.add(web4);
+
+        CalendarView cal1 = new CalendarView(getContext());
+        mApps.add(cal1);
+
+        APPCOUNT = mApps.size();
+
+        for (int i = 0; i<APPCOUNT; i++){
             myFrameLayout frame = new myFrameLayout(getContext());
-            // set color
-            int color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
-            WebView v = new WebView(getContext());
-            v.setInitialScale(100);
-            v.loadUrl("https://www.google.de");
+            frame.addView((View)mApps.get(i));
+            mApps.set(i, frame);
 
-            frame.addView(v);
-
-
-            // add to list
-            mApps.add(frame);
         }
-
         draw();
+    }
+    private WebView makeWebClient(String url){
+        WebView web1 = new WebView(getContext());
+        web1.loadUrl(url);
+        web1.setWebViewClient(new WebViewClient() {
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+                view.loadUrl(request.getUrl().toString());
+                return false;
+            }
+        });
+        return web1;
     }
 
     public void draw() {
@@ -84,6 +108,10 @@ public class AppDrawer extends ScrollView {
             params.height = MINAPPWIDTH * 3 / 2;
             params.columnSpec = GridLayout.spec(i % columnCount, 1.f);
             // add views
+            //myFrameLayout fr = new myFrameLayout(getContext());
+
+            //fr.addView((View) mApps.get(i));
+            //mGridLayout.addView(fr, params);
             mGridLayout.addView((View) mApps.get(i), params);
         }
     }
