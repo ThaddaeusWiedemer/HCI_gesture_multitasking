@@ -287,7 +287,7 @@ public class AppContainer extends ConstraintLayout {
         if(!debugText.equals("")) {
             toast.cancel();
             toast = Toast.makeText(getContext(), debugText, Toast.LENGTH_SHORT);
-            toast.show();
+            //toast.show();
         }
         return true;
     }
