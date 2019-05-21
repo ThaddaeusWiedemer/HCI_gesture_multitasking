@@ -18,6 +18,7 @@ import android.widget.GridLayout;
 import android.widget.ScrollView;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -77,7 +78,29 @@ public class AppDrawer extends ScrollView {
         CalendarView cal1 = new CalendarView(getContext());
         mApps.add(cal1);
 
+        View col1 = new View(getContext());
+        int c1 = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
+        col1.setBackgroundColor(c1);
+        mApps.add(col1);
+
+        View col2 = new View(getContext());
+        int c2 = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
+        col2.setBackgroundColor(c2);
+        mApps.add(col2);
+
+        View col3 = new View(getContext());
+        int c3 = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
+        col3.setBackgroundColor(c3);
+        mApps.add(col3);
+
+        View col4 = new View(getContext());
+        int c4 = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
+        col4.setBackgroundColor(c4);
+        mApps.add(col4);
+
         APPCOUNT = mApps.size();
+
+        Collections.shuffle(mApps);
 
         for (int i = 0; i<APPCOUNT; i++){
             myFrameLayout frame = new myFrameLayout(getContext());
