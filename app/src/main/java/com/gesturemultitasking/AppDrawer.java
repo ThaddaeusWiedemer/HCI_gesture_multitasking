@@ -1,19 +1,14 @@
 package com.gesturemultitasking;
 
-import android.animation.LayoutTransition;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
-import android.support.constraint.ConstraintLayout;
-import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.CalendarView;
-import android.widget.FrameLayout;
 import android.widget.GridLayout;
 import android.widget.ScrollView;
 
@@ -23,9 +18,11 @@ import java.util.List;
 import java.util.Random;
 
 public class AppDrawer extends ScrollView {
+    private static final String TAG = "AppDrawe";
     private GridLayout mGridLayout;
     private final int MINAPPWIDTH = 400;
     private int APPCOUNT= 28;
+    private int MARGIN_WIDTH = 16;
     private int columnCount;
     private List mApps = new ArrayList();
 
@@ -46,19 +43,22 @@ public class AppDrawer extends ScrollView {
     }
 
     public AppDrawer(Context context, AttributeSet attrs, int defStyleAttr, int width) {
-        super(context, attrs, defStyleAttr);
-        // determine how many cells can fit next to each other
-        columnCount = Math.max((width) / (MINAPPWIDTH + 10), 1);
-        init();
+        super(context, attrs, defStyleAttr)
+        init(width);
     }
 
-    public void init() {
+    @SuppressLint("ResourceAsColor")
+    public void init(int width) {
         // make a GridLayout
         mGridLayout = new GridLayout(getContext());
         // set margins between cells
-        mGridLayout.setUseDefaultMargins(true);
+        mGridLayout.setBackgroundColor(android.R.color.black);
+        setBackgroundColor(android.R.color.black);
+        setColumnCount(width);
         // add the layout
         addView(mGridLayout);
+        mGridLayout.setBackgroundColor(android.R.color.black);
+        setBackgroundColor(android.R.color.black);
 
         // add dummy apps
         Random rnd = new Random();
@@ -110,6 +110,7 @@ public class AppDrawer extends ScrollView {
         }
         draw();
     }
+
     private WebView makeWebClient(String url){
         WebView web1 = new WebView(getContext());
         web1.loadUrl(url);
@@ -130,6 +131,7 @@ public class AppDrawer extends ScrollView {
             params.width = MINAPPWIDTH;
             params.height = MINAPPWIDTH * 3 / 2;
             params.columnSpec = GridLayout.spec(i % columnCount, 1.f);
+            params.setMargins(MARGIN_WIDTH, MARGIN_WIDTH, MARGIN_WIDTH, MARGIN_WIDTH);
             // add views
             //myFrameLayout fr = new myFrameLayout(getContext());
 
@@ -140,20 +142,15 @@ public class AppDrawer extends ScrollView {
     }
 
     public void update(int newWidth){
-        columnCount = Math.max((newWidth) / (MINAPPWIDTH + 10), 1);
         mGridLayout.removeAllViews();
-        mGridLayout.setColumnCount(columnCount);
+        setColumnCount(newWidth);
         draw();
     }
 
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        int width = MeasureSpec.getSize(widthMeasureSpec);
-        int nColumns = Math.max((width) / (MINAPPWIDTH + 10), 1);
-        mGridLayout.setColumnCount(nColumns);
+    private void setColumnCount(int width){
+        columnCount = Math.max((width) / (MINAPPWIDTH + 2 * MARGIN_WIDTH), 1);
+        mGridLayout.setColumnCount(columnCount);
     }
-
 }
 
 

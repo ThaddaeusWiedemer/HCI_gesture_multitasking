@@ -29,7 +29,7 @@ public class AppContainer extends ConstraintLayout {
     public final static boolean ORIENT_H = true;
     public final static boolean END = false;
     public final static boolean START = true;
-    public final static int DIVIDER_SIZE = 4;
+    public final static int DIVIDER_SIZE = 8;
     
     public final static int WIDTH = 2160;
     public final static int HEIGHT = 1920;
@@ -262,6 +262,11 @@ public class AppContainer extends ConstraintLayout {
                 mEnd.update(newWidth);
             }
 
+
+        }
+
+        // case: split
+        if(mDivider != null){
 
         }
     }
