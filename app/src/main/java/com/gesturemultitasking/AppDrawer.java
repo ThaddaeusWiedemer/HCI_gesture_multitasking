@@ -43,7 +43,8 @@ public class AppDrawer extends ScrollView {
     }
 
     public AppDrawer(Context context, AttributeSet attrs, int defStyleAttr, int width) {
-        super(context, attrs, defStyleAttr)
+        super(context, attrs, defStyleAttr);
+        setBackgroundColor(Color.argb(255, 50, 50, 50));
         init(width);
     }
 
@@ -51,14 +52,9 @@ public class AppDrawer extends ScrollView {
     public void init(int width) {
         // make a GridLayout
         mGridLayout = new GridLayout(getContext());
-        // set margins between cells
-        mGridLayout.setBackgroundColor(android.R.color.black);
-        setBackgroundColor(android.R.color.black);
         setColumnCount(width);
         // add the layout
         addView(mGridLayout);
-        mGridLayout.setBackgroundColor(android.R.color.black);
-        setBackgroundColor(android.R.color.black);
 
         // add dummy apps
         Random rnd = new Random();
@@ -76,6 +72,7 @@ public class AppDrawer extends ScrollView {
         mApps.add(web4);
 
         CalendarView cal1 = new CalendarView(getContext());
+        cal1.setBackgroundColor(Color.argb(255, 255, 255, 255));
         mApps.add(cal1);
 
         View col1 = new View(getContext());
