@@ -185,6 +185,11 @@ public class AppContainer extends ConstraintLayout {
 
     @SuppressLint("ResourceAsColor")
     public void keepOnly(AppContainer keepSide){
+        if(keepSide.isMStart() ? mEnd.isSplit() : mStart.isSplit()){
+            ColorBlocksActivity.nWindows -= 2;
+        } else{
+            ColorBlocksActivity.nWindows--;
+        }
         if(keepSide.isSplit()){ // the content that has to be copied over is a split AppContainer
             // get all children
             View divider = keepSide.getChildAt(0);
@@ -210,7 +215,6 @@ public class AppContainer extends ConstraintLayout {
         }
         // update content and window count
         update(getMeasuredWidth());
-        ColorBlocksActivity.nWindows--;
     }
 
     private void moveSplit(PointF delta){
