@@ -1,26 +1,28 @@
 package com.gesturemultitasking;
 
-import android.animation.LayoutTransition;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
-import android.support.constraint.ConstraintLayout;
-import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
+import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
+import android.widget.CalendarView;
 import android.widget.GridLayout;
 import android.widget.ScrollView;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
 public class AppDrawer extends ScrollView {
+    private static final String TAG = "AppDrawe";
     private GridLayout mGridLayout;
     private final int MINAPPWIDTH = 400;
-    private final int APPCOUNT = 28;
+    private int APPCOUNT= 28;
+    private int MARGIN_WIDTH = 16;
     private int columnCount;
     private List mApps = new ArrayList();
 
@@ -42,38 +44,81 @@ public class AppDrawer extends ScrollView {
 
     public AppDrawer(Context context, AttributeSet attrs, int defStyleAttr, int width) {
         super(context, attrs, defStyleAttr);
-        // determine how many cells can fit next to each other
-        columnCount = Math.max((width) / (MINAPPWIDTH + 10), 1);
-        init();
+        setBackgroundColor(Color.argb(255, 50, 50, 50));
+        init(width);
     }
 
-    public void init() {
+    @SuppressLint("ResourceAsColor")
+    public void init(int width) {
         // make a GridLayout
         mGridLayout = new GridLayout(getContext());
-        // set margins between cells
-        mGridLayout.setUseDefaultMargins(true);
+        setColumnCount(width);
         // add the layout
         addView(mGridLayout);
 
         // add dummy apps
         Random rnd = new Random();
-        for (int i = 0; i < APPCOUNT; i++) {
 
+        WebView web1 = makeWebClient("https://www.shine.cn");
+        mApps.add(web1);
+
+        WebView web2 = makeWebClient("http://m.xinhuanet.com/");
+        mApps.add(web2);
+
+        WebView web3 = makeWebClient("http://www.taiwan.cn/m/");
+        mApps.add(web3);
+
+        WebView web4 = makeWebClient("http://wap.chengdu.cn/");
+        mApps.add(web4);
+
+        CalendarView cal1 = new CalendarView(getContext());
+        cal1.setBackgroundColor(Color.argb(255, 255, 255, 255));
+        mApps.add(cal1);
+
+        View col1 = new View(getContext());
+        int c1 = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
+        col1.setBackgroundColor(c1);
+        mApps.add(col1);
+
+        View col2 = new View(getContext());
+        int c2 = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
+        col2.setBackgroundColor(c2);
+        mApps.add(col2);
+
+        View col3 = new View(getContext());
+        int c3 = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
+        col3.setBackgroundColor(c3);
+        mApps.add(col3);
+
+        View col4 = new View(getContext());
+        int c4 = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
+        col4.setBackgroundColor(c4);
+        mApps.add(col4);
+
+        APPCOUNT = mApps.size();
+
+        Collections.shuffle(mApps);
+
+        for (int i = 0; i<APPCOUNT; i++){
             myFrameLayout frame = new myFrameLayout(getContext());
-            // set color
-            int color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
-            WebView v = new WebView(getContext());
-            v.setInitialScale(100);
-            v.loadUrl("https://www.google.de");
+            frame.addView((View)mApps.get(i));
+            mApps.set(i, frame);
 
-            frame.addView(v);
-
-
-            // add to list
-            mApps.add(frame);
         }
-
         draw();
+    }
+
+    private WebView makeWebClient(String url){
+        WebView web1 = new WebView(getContext());
+        web1.loadUrl(url);
+        web1.setWebViewClient(new WebViewClient() {
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+                view.loadUrl(request.getUrl().toString());
+                return false;
+            }
+        });
+        return web1;
     }
 
     public void draw() {
@@ -83,26 +128,26 @@ public class AppDrawer extends ScrollView {
             params.width = MINAPPWIDTH;
             params.height = MINAPPWIDTH * 3 / 2;
             params.columnSpec = GridLayout.spec(i % columnCount, 1.f);
+            params.setMargins(MARGIN_WIDTH, MARGIN_WIDTH, MARGIN_WIDTH, MARGIN_WIDTH);
             // add views
+            //myFrameLayout fr = new myFrameLayout(getContext());
+
+            //fr.addView((View) mApps.get(i));
+            //mGridLayout.addView(fr, params);
             mGridLayout.addView((View) mApps.get(i), params);
         }
     }
 
     public void update(int newWidth){
-        columnCount = Math.max((newWidth) / (MINAPPWIDTH + 10), 1);
         mGridLayout.removeAllViews();
-        mGridLayout.setColumnCount(columnCount);
+        setColumnCount(newWidth);
         draw();
     }
 
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        int width = MeasureSpec.getSize(widthMeasureSpec);
-        int nColumns = Math.max((width) / (MINAPPWIDTH + 10), 1);
-        mGridLayout.setColumnCount(nColumns);
+    private void setColumnCount(int width){
+        columnCount = Math.max((width) / (MINAPPWIDTH + 2 * MARGIN_WIDTH), 1);
+        mGridLayout.setColumnCount(columnCount);
     }
-
 }
 
 
