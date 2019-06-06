@@ -1,5 +1,6 @@
 package com.gesturemultitasking;
 
+import android.animation.LayoutTransition;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
@@ -67,6 +68,7 @@ public class AppContainer extends ConstraintLayout {
         mSwipeDetector = new SwipeDetector(context, new SwipeListener(), 40, 200, WIDTH, HEIGHT);
 
         this.setBackgroundColor(mColor);
+        this.setLayoutTransition(new LayoutTransition());
     }
 
     @SuppressLint("ResourceAsColor")
