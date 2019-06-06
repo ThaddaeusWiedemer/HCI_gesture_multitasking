@@ -11,14 +11,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
-        <activity android:name=".DragDrop"
-            android:exported="true"
-            android:label="@string/title_drag_drop">
-        </activity>
         <activity android:name=".tiles" />
-        <activity android:name=".MainActivity">
-
-        </activity>
         <activity
             android:name=".ColorBlocksActivity"
             android:exported="true"
